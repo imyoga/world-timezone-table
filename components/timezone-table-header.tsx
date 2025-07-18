@@ -21,10 +21,10 @@ export function TimezoneTableHeader({
 				<th className='p-3 text-left font-semibold min-w-32'>
 					<div className='flex flex-col items-start gap-1'>
 						<span>
-							{baseTimezoneInfo.country} {baseTimezoneInfo.currentName}
+							{baseTimezoneInfo.country}
 						</span>
 						<span className='text-xs text-muted-foreground'>
-							{baseTimezoneInfo.utcOffset}
+							{`${baseTimezoneInfo.currentName} (${baseTimezoneInfo.utcOffset})`}
 						</span>
 					</div>
 				</th>
@@ -36,11 +36,9 @@ export function TimezoneTableHeader({
 							className='p-3 text-center font-semibold min-w-28'
 						>
 							<div className='flex flex-col items-center gap-1'>
-								<span>
-									{tzInfo.country} {tzInfo.currentName}
-								</span>
+								<span>{`${tzInfo.city} (${tzInfo.country})`}</span>
 								<span className='text-xs text-muted-foreground'>
-									{tzInfo.utcOffset}
+									{`${tzInfo.currentName} (${tzInfo.utcOffset})`}
 								</span>
 							</div>
 						</th>

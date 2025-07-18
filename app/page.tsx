@@ -75,7 +75,7 @@ export default function WorldTimezoneTable() {
 					</div>
 
 					{/* Controls */}
-					<div className='flex flex-wrap gap-4 items-center'>
+					<div className='flex flex-wrap gap-6 items-center justify-start'>
 						<TimezoneSelect
 							baseTimezone={baseTimezone}
 							selectedDate={selectedDate}

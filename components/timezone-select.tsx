@@ -20,11 +20,13 @@ export function TimezoneSelect({
 	onBaseTimezoneChange,
 }: TimezoneSelectProps) {
 	return (
-		<div className='flex items-center gap-2'>
-			<Settings className='h-4 w-4' />
-			<span className='text-sm font-medium'>Base Timezone:</span>
+		<div className='flex items-center gap-3'>
+			<div className='flex items-center gap-2 text-sm font-medium text-muted-foreground'>
+				<Settings className='h-4 w-4' />
+				<span>Base Timezone:</span>
+			</div>
 			<Select value={baseTimezone} onValueChange={onBaseTimezoneChange}>
-				<SelectTrigger className='w-48'>
+				<SelectTrigger className='w-48 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 transition-colors'>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>

@@ -3,8 +3,7 @@ export interface TimezoneInfo {
   name: string
   country: string
   city: string
-  standardName: string
-  daylightName: string
+  timezone: string
 }
 
 export interface ExtendedTimezoneInfo extends TimezoneInfo {
@@ -13,76 +12,67 @@ export interface ExtendedTimezoneInfo extends TimezoneInfo {
   isDST: boolean
 }
 
+// Minimal hardcoded data - only what we can't derive automatically
 export const TIMEZONES: Record<string, TimezoneInfo> = {
   "America/New_York": {
     name: "Eastern",
     country: "US",
     city: "New York",
-    standardName: "EST",
-    daylightName: "EDT",
+    timezone: "America/New_York",
   },
   "America/Chicago": {
-    name: "Central",
+    name: "Central", 
     country: "US",
     city: "Chicago",
-    standardName: "CST",
-    daylightName: "CDT",
+    timezone: "America/Chicago",
   },
   "America/Denver": {
     name: "Mountain",
-    country: "US",
+    country: "US", 
     city: "Denver",
-    standardName: "MST",
-    daylightName: "MDT",
+    timezone: "America/Denver",
   },
   "America/Los_Angeles": {
     name: "Pacific",
     country: "US",
-    city: "Los Angeles",
-    standardName: "PST",
-    daylightName: "PDT",
+    city: "Los Angeles", 
+    timezone: "America/Los_Angeles",
   },
   "America/Edmonton": {
     name: "Mountain",
     country: "CA",
     city: "Edmonton",
-    standardName: "MST",
-    daylightName: "MDT",
+    timezone: "America/Edmonton",
   },
   "Europe/London": {
     name: "Greenwich",
     country: "GB",
     city: "London",
-    standardName: "GMT",
-    daylightName: "BST",
+    timezone: "Europe/London",
   },
   "Asia/Dubai": {
     name: "Gulf",
     country: "AE",
     city: "Dubai",
-    standardName: "GST",
-    daylightName: "GST",
+    timezone: "Asia/Dubai",
   },
   "Asia/Kolkata": {
     name: "India",
     country: "IN",
     city: "Mumbai",
-    standardName: "IST",
-    daylightName: "IST",
+    timezone: "Asia/Kolkata",
   },
   "Asia/Tokyo": {
     name: "Japan",
     country: "JP",
     city: "Tokyo",
-    standardName: "JST",
-    daylightName: "JST",
+    timezone: "Asia/Tokyo",
   },
   "Australia/Sydney": {
     name: "Australian Eastern",
     country: "AU",
     city: "Sydney",
-    standardName: "AEST",
-    daylightName: "AEDT",
+    timezone: "Australia/Sydney",
   },
 }
 
@@ -112,6 +102,80 @@ export const getTimezoneOffset = (date: Date, timezone: string): number => {
   const utc = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }))
   const local = new Date(date.toLocaleString("en-US", { timeZone: timezone }))
   return (local.getTime() - utc.getTime()) / (1000 * 60 * 60)
+}
+
+// Common timezone abbreviation mapping for consistent display
+const TIMEZONE_ABBREVIATIONS: Record<string, { standard: string, daylight: string }> = {
+  "Europe/London": { standard: "GMT", daylight: "BST" },
+  "Asia/Dubai": { standard: "GST", daylight: "GST" },
+  "Asia/Kolkata": { standard: "IST", daylight: "IST" },
+  "Asia/Tokyo": { standard: "JST", daylight: "JST" },
+  "Australia/Sydney": { standard: "AEST", daylight: "AEDT" },
+}
+
+// Get timezone abbreviation dynamically using Intl API with fallback to custom mapping
+export const getTimezoneAbbreviation = (date: Date, timezone: string): string => {
+  try {
+    // First try the Intl API
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'short'
+    })
+    
+    const parts = formatter.formatToParts(date)
+    const timeZoneName = parts.find(part => part.type === 'timeZoneName')
+    const abbreviation = timeZoneName?.value
+    
+    // If we get a proper abbreviation (not GMT+X format), use it
+    if (abbreviation && !abbreviation.startsWith('GMT') && !abbreviation.startsWith('UTC')) {
+      return abbreviation
+    }
+    
+    // Otherwise, use our custom mapping
+    const customMapping = TIMEZONE_ABBREVIATIONS[timezone]
+    if (customMapping) {
+      const isDST = isDSTActive(date, timezone)
+      return isDST ? customMapping.daylight : customMapping.standard
+    }
+    
+    // Fallback to the Intl result or timezone name
+    return abbreviation || timezone.split('/').pop() || timezone
+  } catch (error) {
+    // Final fallback
+    const customMapping = TIMEZONE_ABBREVIATIONS[timezone]
+    if (customMapping) {
+      const isDST = isDSTActive(date, timezone)
+      return isDST ? customMapping.daylight : customMapping.standard
+    }
+    return timezone.split('/').pop() || timezone
+  }
+}
+
+// Get timezone display name dynamically
+export const getTimezoneDisplayName = (timezone: string): string => {
+  try {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'long'
+    })
+    
+    const parts = formatter.formatToParts(new Date())
+    const timeZoneName = parts.find(part => part.type === 'timeZoneName')
+    
+    return timeZoneName?.value || timezone.replace('_', ' ')
+  } catch (error) {
+    return timezone.replace('_', ' ')
+  }
+}
+
+// Get all supported timezones from Intl API (if needed for future expansions)
+export const getAllSupportedTimezones = (): string[] => {
+  try {
+    return Intl.supportedValuesOf('timeZone')
+  } catch (error) {
+    // Fallback to our defined timezones if Intl.supportedValuesOf is not available
+    return Object.keys(TIMEZONES)
+  }
 }
 
 export const formatUTCOffset = (offset: number): string => {
@@ -153,10 +217,11 @@ export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedT
   const info = TIMEZONES[timezone]
   const isDST = isDSTActive(selectedDate, timezone)
   const offset = getTimezoneOffset(selectedDate, timezone)
+  const currentName = getTimezoneAbbreviation(selectedDate, timezone)
 
   return {
     ...info,
-    currentName: isDST ? info.daylightName : info.standardName,
+    currentName,
     utcOffset: formatUTCOffset(offset),
     isDST,
   }

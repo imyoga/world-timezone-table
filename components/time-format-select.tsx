@@ -16,10 +16,12 @@ export function TimeFormatSelect({
 	onTimeFormatChange,
 }: TimeFormatSelectProps) {
 	return (
-		<div className='flex items-center gap-2'>
-			<span className='text-sm font-medium'>Format:</span>
+		<div className='flex items-center gap-3'>
+			<div className='flex items-center gap-2 text-sm font-medium text-muted-foreground'>
+				<span>Format:</span>
+			</div>
 			<Select value={timeFormat} onValueChange={onTimeFormatChange}>
-				<SelectTrigger className='w-20'>
+				<SelectTrigger className='w-20 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 transition-colors'>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>
