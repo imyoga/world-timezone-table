@@ -126,24 +126,26 @@ export const formatUTCOffset = (offset: number): string => {
   return `UTC${sign}${hours}:${minutes.toString().padStart(2, "0")}`
 }
 
-export const formatTime = (date: Date, format: "12h" | "24h"): string => {
+export const formatTime = (date: Date, format: "12h" | "24h", includeSeconds: boolean = false): string => {
   if (format === "24h") {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
+      second: includeSeconds ? "2-digit" : undefined,
       hour12: false,
     })
   }
   return date.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
+    second: includeSeconds ? "2-digit" : undefined,
     hour12: true,
   })
 }
 
 export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDate: Date): Date => {
   const selectedDateTime = new Date(selectedDate)
-  selectedDateTime.setHours(baseTime.getHours(), baseTime.getMinutes(), 0, 0)
+  selectedDateTime.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
   return new Date(selectedDateTime.toLocaleString("en-US", { timeZone: timezone }))
 }
 

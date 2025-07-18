@@ -11,6 +11,8 @@ interface CurrentTimeDisplayProps {
 	baseTimezone: string
 	baseTimezoneInfo: ExtendedTimezoneInfo
 	timeFormat: '12h' | '24h'
+	onTimeFormatToggle: () => void
+	isClient: boolean
 }
 
 export function CurrentTimeDisplay({
@@ -18,18 +20,49 @@ export function CurrentTimeDisplay({
 	baseTimezone,
 	baseTimezoneInfo,
 	timeFormat,
+	onTimeFormatToggle,
+	isClient,
 }: CurrentTimeDisplayProps) {
+	// Show loading state during hydration to avoid mismatch
+	if (!isClient) {
+		return (
+			<div className='flex items-center gap-4 bg-white dark:bg-slate-800 rounded-lg px-4 py-3 shadow-sm border hover:shadow-md transition-all duration-200 cursor-pointer group'>
+				<Clock className='h-5 w-5 text-blue-600 group-hover:text-blue-700 transition-colors' />
+				<div className='text-right'>
+					<p className='text-lg font-semibold group-hover:text-blue-600 transition-colors'>
+						--:--:--
+					</p>
+					<p className='text-sm text-muted-foreground group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors'>
+						Loading...
+					</p>
+				</div>
+			</div>
+		)
+	}
+
 	return (
-		<div className='flex items-center gap-4 bg-white dark:bg-slate-800 rounded-lg px-4 py-2 shadow-sm border'>
-			<Clock className='h-5 w-5 text-blue-600' />
+		<div
+			className='flex items-center gap-4 bg-white dark:bg-slate-800 rounded-lg px-4 py-3 shadow-sm border hover:shadow-md transition-all duration-200 cursor-pointer group'
+			onClick={onTimeFormatToggle}
+			role='button'
+			tabIndex={0}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault()
+					onTimeFormatToggle()
+				}
+			}}
+		>
+			<Clock className='h-5 w-5 text-blue-600 group-hover:text-blue-700 transition-colors' />
 			<div className='text-right'>
-				<p className='text-lg font-semibold'>
+				<p className='text-lg font-semibold group-hover:text-blue-600 transition-colors'>
 					{formatTime(
 						getTimeForTimezone(currentTime, baseTimezone, new Date()),
-						timeFormat
+						timeFormat,
+						true
 					)}
 				</p>
-				<p className='text-sm text-muted-foreground'>
+				<p className='text-sm text-muted-foreground group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors'>
 					{format(new Date(), 'EEE, MMM d, yyyy')} • {baseTimezoneInfo.country}{' '}
 					{baseTimezoneInfo.currentName}
 				</p>

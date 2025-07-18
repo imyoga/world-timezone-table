@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Globe } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { TimezoneSelect } from '@/components/timezone-select'
@@ -11,6 +11,7 @@ import { TimezoneTableHeader } from '@/components/timezone-table-header'
 import { TimezoneTableBody } from '@/components/timezone-table-body'
 import { TimezoneModal } from '@/components/timezone-modal'
 import { useTimeRows, useCurrentRowIndex } from '@/hooks/use-time-rows'
+import { useClientTime } from '@/hooks/use-client-time'
 import { getTimezoneInfo, getTimeForTimezone } from '@/lib/timezone-utils'
 
 export default function WorldTimezoneTable() {
@@ -18,16 +19,9 @@ export default function WorldTimezoneTable() {
 	const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('12h')
 	const [selectedRow, setSelectedRow] = useState<number | null>(null)
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-	const [currentTime, setCurrentTime] = useState(new Date())
 	const [calendarOpen, setCalendarOpen] = useState(false)
 
-	// Update current time every minute
-	useEffect(() => {
-		const timer = setInterval(() => {
-			setCurrentTime(new Date())
-		}, 60000)
-		return () => clearInterval(timer)
-	}, [])
+	const { isClient, currentTime } = useClientTime()
 
 	const currentRowIndex = useCurrentRowIndex(currentTime, baseTimezone)
 	const timeRows = useTimeRows(
@@ -53,6 +47,10 @@ export default function WorldTimezoneTable() {
 		setCalendarOpen(open)
 	}
 
+	const handleTimeFormatToggle = () => {
+		setTimeFormat(timeFormat === '12h' ? '24h' : '12h')
+	}
+
 	return (
 		<div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4'>
 			<div className='max-w-7xl mx-auto'>
@@ -71,6 +69,8 @@ export default function WorldTimezoneTable() {
 							baseTimezone={baseTimezone}
 							baseTimezoneInfo={baseTimezoneInfo}
 							timeFormat={timeFormat}
+							onTimeFormatToggle={handleTimeFormatToggle}
+							isClient={isClient}
 						/>
 					</div>
 
