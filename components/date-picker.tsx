@@ -1,3 +1,5 @@
+'use client'
+
 import { Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -7,6 +9,7 @@ import {
 } from '@/components/ui/popover'
 import { Calendar as CalendarComponent } from '@/components/ui/calendar'
 import { format } from 'date-fns'
+import { cn } from '@/lib/utils'
 
 interface DatePickerProps {
 	selectedDate: Date
@@ -23,14 +26,17 @@ export function DatePicker({
 }: DatePickerProps) {
 	return (
 		<div className='flex items-center gap-2'>
-			<Calendar className='h-4 w-4' />
 			<span className='text-sm font-medium'>Date:</span>
 			<Popover open={calendarOpen} onOpenChange={onCalendarOpenChange}>
 				<PopoverTrigger asChild>
 					<Button
 						variant='outline'
-						className='w-48 justify-start text-left font-normal bg-transparent'
+						className={cn(
+							'w-48 justify-start text-left font-normal bg-white',
+							!selectedDate && 'text-muted-foreground'
+						)}
 					>
+						<Calendar className='mr-2 h-4 w-4' />
 						{format(selectedDate, 'PPP')}
 					</Button>
 				</PopoverTrigger>
