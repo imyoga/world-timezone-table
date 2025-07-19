@@ -27,29 +27,25 @@ export function TimezoneTableBody({
 			{timeRows.map((row) => (
 				<tr
 					key={row.index}
-					className={`border-b transition-all duration-200 hover:bg-muted/50 hover:shadow-sm ${
-						row.index % 2 === 0 ? 'bg-muted/10' : 'bg-background'
-					} ${
-						row.isCurrentTime
-							? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
+					className={`border-b transition-colors duration-150 cursor-pointer group
+						${row.index % 2 === 0 ? 'bg-muted/10' : 'bg-background'}
+						${row.isCurrentTime 
+							? 'bg-blue-50/60 dark:bg-blue-950/50 border-blue-200/50 dark:border-blue-800/50' 
 							: ''
-					}`}
+						}
+						hover:bg-accent/80 hover:shadow-sm
+						${row.isNextDay ? 'border-t-2 border-dashed border-gray-400' : ''}
+					`}
+					onClick={() => onRowClick(row.index)}
 				>
 					<td
-						className={`p-3 font-medium cursor-pointer ${getGradientClass(
-							row.times[baseTimezone]?.getHours() || 0
-						)} ${
-							row.isNextDay ? 'border-t-2 border-dashed border-gray-400' : ''
-						}`}
-						onClick={() => onRowClick(row.index)}
+						className={`p-3 font-medium transition-colors duration-150
+							${getGradientClass(row.times[baseTimezone]?.getHours() || 0)}
+							group-hover:bg-transparent
+						`}
 					>
 						<div className='flex items-center gap-2'>
 							{formatTime(row.times[baseTimezone], timeFormat)}
-							{row.isCurrentTime && (
-								<Badge variant='secondary' className='text-xs'>
-									NOW
-								</Badge>
-							)}
 							{row.isNextDay && (
 								<Badge variant='outline' className='text-xs'>
 									+1
@@ -61,10 +57,10 @@ export function TimezoneTableBody({
 						(timezone) => (
 							<td
 								key={timezone}
-								className={`p-3 text-center cursor-pointer ${getGradientClass(
-									row.times[timezone]?.getHours() || 0
-								)}`}
-								onClick={() => onRowClick(row.index)}
+								className={`p-3 text-center transition-colors duration-150
+									${getGradientClass(row.times[timezone]?.getHours() || 0)}
+									group-hover:bg-transparent
+								`}
 							>
 								{formatTime(row.times[timezone], timeFormat)}
 							</td>

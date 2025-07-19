@@ -105,6 +105,9 @@ export default function WorldTimezoneTable() {
 									baseTimezone={baseTimezone}
 									baseTimezoneInfo={baseTimezoneInfo}
 									selectedDate={selectedDate}
+									currentTime={currentTime}
+									timeFormat={timeFormat}
+									isClient={isClient}
 								/>
 								<TimezoneTableBody
 									timeRows={timeRows}
