@@ -26,13 +26,13 @@ export function CurrentTimeDisplay({
 	// Show loading state during hydration to avoid mismatch
 	if (!isClient) {
 		return (
-			<div className='flex items-center gap-4 bg-white dark:bg-slate-800 rounded-lg px-4 py-3 shadow-sm border hover:shadow-md transition-all duration-200 cursor-pointer group'>
-				<Clock className='h-5 w-5 text-blue-600 group-hover:text-blue-700 transition-colors' />
+			<div className='flex items-center gap-4 bg-card rounded-lg px-4 py-3 shadow-sm border border-border hover:shadow-md transition-all duration-200 cursor-pointer group'>
+				<Clock className='h-5 w-5 text-primary group-hover:text-primary/80 transition-colors' />
 				<div className='text-right'>
-					<p className='text-lg font-semibold group-hover:text-blue-600 transition-colors'>
+					<p className='text-lg font-semibold text-foreground group-hover:text-primary transition-colors'>
 						--:--:--
 					</p>
-					<p className='text-sm text-muted-foreground group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors'>
+					<p className='text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors'>
 						Loading...
 					</p>
 				</div>
@@ -42,7 +42,7 @@ export function CurrentTimeDisplay({
 
 	return (
 		<div
-			className='flex items-center gap-4 bg-white dark:bg-slate-800 rounded-lg px-4 py-3 shadow-sm border hover:shadow-md transition-all duration-200 cursor-pointer group'
+			className='flex items-center gap-4 bg-card rounded-lg px-4 py-3 shadow-sm border border-border hover:shadow-md transition-all duration-200 cursor-pointer group'
 			onClick={onTimeFormatToggle}
 			role='button'
 			tabIndex={0}
@@ -53,16 +53,16 @@ export function CurrentTimeDisplay({
 				}
 			}}
 		>
-			<Clock className='h-5 w-5 text-blue-600 group-hover:text-blue-700 transition-colors' />
+			<Clock className='h-5 w-5 text-primary group-hover:text-primary/80 transition-colors' />
 			<div className='text-right'>
-				<p className='text-lg font-semibold group-hover:text-blue-600 transition-colors'>
+				<p className='text-lg font-semibold text-foreground group-hover:text-primary transition-colors'>
 					{formatTime(
 						getTimeForTimezone(currentTime, baseTimezone, new Date()),
 						timeFormat,
 						true
 					)}
 				</p>
-				<p className='text-sm text-muted-foreground group-hover:text-slate-600 dark:group-hover:text-slate-400 transition-colors'>
+				<p className='text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors'>
 					{format(new Date(), 'EEE, MMM d, yyyy')} • {baseTimezoneInfo.country}{' '}
 					{baseTimezoneInfo.currentName}
 				</p>

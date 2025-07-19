@@ -227,17 +227,7 @@ export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedT
   }
 }
 
-export const getGradientClass = (hour: number): string => {
-  if (hour >= 6 && hour < 12) {
-    return "bg-gradient-to-r from-yellow-100 to-orange-100 dark:from-yellow-900/20 dark:to-orange-900/20"
-  } else if (hour >= 12 && hour < 18) {
-    return "bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20"
-  } else if (hour >= 18 && hour < 22) {
-    return "bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/20 dark:to-red-900/20"
-  } else {
-    return "bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20"
-  }
-}
+
 
 export const copyToClipboard = async (text: string): Promise<void> => {
   try {

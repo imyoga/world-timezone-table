@@ -2,7 +2,6 @@ import {
 	DEFAULT_COLUMNS,
 	getTimezoneInfo,
 	formatTime,
-	getGradientClass,
 } from '@/lib/timezone-utils'
 import { Badge } from '@/components/ui/badge'
 import { TimeRow } from '@/hooks/use-time-rows'
@@ -27,23 +26,18 @@ export function TimezoneTableBody({
 			{timeRows.map((row) => (
 				<tr
 					key={row.index}
-					className={`border-b transition-colors duration-150 cursor-pointer group
-						${row.index % 2 === 0 ? 'bg-muted/10' : 'bg-background'}
+					className={`border-b border-border transition-colors duration-150 cursor-pointer group
+						${row.index % 2 === 0 ? 'bg-table-row-even' : 'bg-table-row-odd'}
 						${row.isCurrentTime 
-							? 'bg-blue-50/60 dark:bg-blue-950/50 border-blue-200/50 dark:border-blue-800/50' 
+							? 'bg-table-current-time border-table-current-time-border' 
 							: ''
 						}
-						hover:bg-accent/80 hover:shadow-sm
-						${row.isNextDay ? 'border-t-2 border-dashed border-gray-400' : ''}
+						hover:bg-table-row-hover hover:shadow-sm
+						${row.isNextDay ? 'border-t-2 border-dashed border-muted-foreground' : ''}
 					`}
 					onClick={() => onRowClick(row.index)}
 				>
-					<td
-						className={`p-3 font-medium transition-colors duration-150
-							${getGradientClass(row.times[baseTimezone]?.getHours() || 0)}
-							group-hover:bg-transparent
-						`}
-					>
+					<td className="p-3 font-medium transition-colors duration-150">
 						<div className='flex items-center gap-2'>
 							{formatTime(row.times[baseTimezone], timeFormat)}
 							{row.isNextDay && (
@@ -57,10 +51,7 @@ export function TimezoneTableBody({
 						(timezone) => (
 							<td
 								key={timezone}
-								className={`p-3 text-center transition-colors duration-150
-									${getGradientClass(row.times[timezone]?.getHours() || 0)}
-									group-hover:bg-transparent
-								`}
+								className="p-3 text-center transition-colors duration-150"
 							>
 								{formatTime(row.times[timezone], timeFormat)}
 							</td>

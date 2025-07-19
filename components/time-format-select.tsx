@@ -21,7 +21,7 @@ export function TimeFormatSelect({
 				<span>Format:</span>
 			</div>
 			<Select value={timeFormat} onValueChange={onTimeFormatChange}>
-				<SelectTrigger className='w-20 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 transition-colors'>
+				<SelectTrigger className='w-20 bg-card hover:bg-hover border-border transition-colors'>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>

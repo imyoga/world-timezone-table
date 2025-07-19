@@ -10,26 +10,7 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}"
   ],
-  safelist: [
-    // Time-based gradient classes
-    'bg-gradient-to-r',
-    'from-yellow-100',
-    'to-orange-100',
-    'dark:from-yellow-900/20',
-    'dark:to-orange-900/20',
-    'from-blue-100',
-    'to-cyan-100',
-    'dark:from-blue-900/20',
-    'dark:to-cyan-900/20',
-    'from-orange-100',
-    'to-red-100',
-    'dark:from-orange-900/20',
-    'dark:to-red-900/20',
-    'from-indigo-100',
-    'to-purple-100',
-    'dark:from-indigo-900/20',
-    'dark:to-purple-900/20',
-  ],
+
   theme: {
   	extend: {
   		colors: {
@@ -66,6 +47,16 @@ const config: Config = {
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
+  			table: {
+  				header: 'hsl(var(--table-header))',
+  				'row-even': 'hsl(var(--table-row-even))',
+  				'row-odd': 'hsl(var(--table-row-odd))',
+  				'row-hover': 'hsl(var(--table-row-hover))',
+  				'current-time': 'hsl(var(--table-current-time))',
+  				'current-time-border': 'hsl(var(--table-current-time-border))'
+  			},
+  			hover: 'hsl(var(--hover))',
+  			active: 'hsl(var(--active))',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
   				'2': 'hsl(var(--chart-2))',

@@ -26,7 +26,7 @@ export function TimezoneTableHeader({
 	return (
 		<thead>
 			{/* Main header row with timezone info */}
-			<tr className='border-b bg-muted/50'>
+			<tr className='border-b border-border bg-table-header'>
 				<th className='p-3 text-left font-semibold min-w-32'>
 					<div className='flex flex-col items-start gap-1'>
 						<span>
@@ -56,10 +56,10 @@ export function TimezoneTableHeader({
 			</tr>
 			
 			{/* Current time row */}
-			<tr className='border-b bg-slate-50/50 dark:bg-slate-800/50'>
+			<tr className='border-b border-border bg-muted'>
 				<th className='p-2 text-left font-medium text-sm'>
 					<div className='flex flex-col items-start gap-1'>
-						<span className='text-blue-600 dark:text-blue-400 font-semibold'>
+						<span className='text-primary font-semibold'>
 							{isClient ? formatTime(getTimeForTimezone(currentTime, baseTimezone, new Date()), timeFormat, true) : '--:--:--'}
 						</span>
 						<span className='text-xs text-muted-foreground'>
@@ -73,7 +73,7 @@ export function TimezoneTableHeader({
 						className='p-2 text-center font-medium text-sm'
 					>
 						<div className='flex flex-col items-center gap-1'>
-							<span className='text-blue-600 dark:text-blue-400 font-semibold'>
+							<span className='text-primary font-semibold'>
 								{isClient ? formatTime(getTimeForTimezone(currentTime, timezone, new Date()), timeFormat, true) : '--:--:--'}
 							</span>
 							<span className='text-xs text-muted-foreground'>

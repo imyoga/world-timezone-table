@@ -26,7 +26,7 @@ export function TimezoneSelect({
 				<span>Base Timezone:</span>
 			</div>
 			<Select value={baseTimezone} onValueChange={onBaseTimezoneChange}>
-				<SelectTrigger className='w-48 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border-slate-200 dark:border-slate-700 transition-colors'>
+				<SelectTrigger className='w-48 bg-card hover:bg-hover border-border transition-colors'>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>
