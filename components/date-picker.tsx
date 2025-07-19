@@ -68,7 +68,7 @@ function SimpleDropdown({ value, options, onSelect, className }: DropdownProps) 
 								setIsOpen(false)
 							}}
 							className={cn(
-								"relative flex w-full cursor-pointer select-none items-center px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground transition-colors",
+								"relative flex w-full cursor-pointer select-none items-center px-2 py-1.5 text-sm outline-none border border-transparent hover:border-primary/20 hover:bg-accent/80 hover:text-accent-foreground transition-all duration-150 ease-in-out hover:shadow-sm",
 								value.toString() === option.value.toString() && "bg-accent text-accent-foreground"
 							)}
 						>
@@ -200,8 +200,8 @@ function SimpleCalendar({
 									onDateSelect(newDate)
 								}}
 								className={cn(
-									"w-full h-full text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors",
-									isSelected(day) && "bg-primary text-primary-foreground hover:bg-primary",
+									"w-full h-full text-sm rounded-md border border-transparent hover:border-primary/20 hover:bg-accent/80 hover:text-accent-foreground transition-all duration-150 ease-in-out hover:shadow-sm",
+									isSelected(day) && "bg-primary text-primary-foreground hover:bg-primary border-primary/30",
 									isToday(day) && !isSelected(day) && "bg-accent text-accent-foreground"
 								)}
 							>

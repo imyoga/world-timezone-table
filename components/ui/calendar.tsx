@@ -63,7 +63,7 @@ function CustomDropdown({ value, options, onSelect, className, placeholder }: Cu
 								setIsOpen(false)
 							}}
 							className={cn(
-								"relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground transition-colors",
+								"relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-1.5 text-sm outline-none border border-transparent hover:border-primary/20 hover:bg-accent/80 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground transition-all duration-150 ease-in-out hover:shadow-sm",
 								value === option.value && "bg-accent text-accent-foreground"
 							)}
 						>
