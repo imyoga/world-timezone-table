@@ -8,6 +8,7 @@ import {
 import { useTimeFormat } from '@/components/theme-provider'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { TableHeader, TableHead, TableRow } from '@/components/ui/table'
 
 interface TimezoneTableHeaderProps {
 	baseTimezone: string
@@ -35,27 +36,34 @@ export function TimezoneTableHeader({
 	const otherColumns = dynamicColumns.filter((tz) => tz !== baseTimezone)
 
 	return (
-		<thead>
+		<TableHeader className='sticky top-0 z-20'>
 			{/* Main header row with timezone info */}
-			<tr className='border-b border-border bg-table-header'>
-				<th className='p-3 text-left font-semibold min-w-32'>
+			<TableRow 
+				className='bg-background h-[60px] border-b border-border/50'
+				style={{
+					position: 'sticky',
+					top: 0,
+					zIndex: 21
+				}}
+			>
+				<TableHead className='px-4 py-3 text-left font-semibold min-w-32 bg-background text-foreground'>
 					<div className='flex flex-col items-start gap-1'>
-						<span>{getFormattedCityName(baseTimezone)}</span>
+						<span className='text-foreground'>{getFormattedCityName(baseTimezone)}</span>
 						<span className='text-xs text-muted-foreground'>
 							{`${baseTimezoneInfo.currentName} (${baseTimezoneInfo.utcOffset})`}
 						</span>
 					</div>
-				</th>
+				</TableHead>
 				{otherColumns.map((timezone) => {
 					const tzInfo = getTimezoneInfo(timezone, selectedDate)
 					return (
-						<th
+						<TableHead
 							key={timezone}
-							className='p-3 text-center font-semibold min-w-28 relative group'
+							className='px-4 py-3 text-center font-semibold min-w-28 relative group bg-background text-foreground'
 						>
 							<div className='flex flex-col items-center gap-1'>
 								<div className='flex items-center gap-1'>
-									<span>{getFormattedCityName(timezone)}</span>
+									<span className='text-foreground'>{getFormattedCityName(timezone)}</span>
 									{onRemoveColumn && (
 										<Button
 											size='sm'
@@ -71,17 +79,25 @@ export function TimezoneTableHeader({
 									{`${tzInfo.currentName} (${tzInfo.utcOffset})`}
 								</span>
 							</div>
-						</th>
+						</TableHead>
 					)
 				})}
-			</tr>
+			</TableRow>
 
-			{/* Current time row */}
-			<tr className='border-b border-border bg-muted'>
-				<th className='p-2 text-left font-medium text-sm'>
+			{/* Current time row - same background as first row with elevated shadow */}
+			<TableRow 
+				className='bg-background h-[52px] border-b border-border'
+				style={{
+					position: 'sticky',
+					top: '60px',
+					zIndex: 20,
+					boxShadow: '0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08)'
+				}}
+			>
+				<TableHead className='px-4 py-2 text-left font-medium text-sm bg-background h-[52px] text-foreground'>
 					<div className='flex flex-col items-start gap-1'>
 						<span
-							className='font-semibold'
+							className='font-semibold text-sm'
 							style={{ color: colorScheme.primary }}
 						>
 							{isClient
@@ -92,17 +108,17 @@ export function TimezoneTableHeader({
 								  )
 								: '--:--:--'}
 						</span>
-						<span className='text-xs text-muted-foreground'>Current Time</span>
+						<span className='text-xs text-muted-foreground/80'>Current Time</span>
 					</div>
-				</th>
+				</TableHead>
 				{otherColumns.map((timezone) => (
-					<th
+					<TableHead
 						key={`current-${timezone}`}
-						className='p-2 text-center font-medium text-sm'
+						className='px-4 py-2 text-center font-medium text-sm bg-background h-[52px] text-foreground'
 					>
 						<div className='flex flex-col items-center gap-1'>
 							<span
-								className='font-semibold'
+								className='font-semibold text-sm'
 								style={{ color: colorScheme.primary }}
 							>
 								{isClient
@@ -113,13 +129,13 @@ export function TimezoneTableHeader({
 									  )
 									: '--:--:--'}
 							</span>
-							<span className='text-xs text-muted-foreground'>
+							<span className='text-xs text-muted-foreground/80'>
 								Current Time
 							</span>
 						</div>
-					</th>
+					</TableHead>
 				))}
-			</tr>
-		</thead>
+			</TableRow>
+		</TableHeader>
 	)
 }

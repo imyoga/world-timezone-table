@@ -1,6 +1,7 @@
 import { getTimezoneInfo, formatTime } from '@/lib/timezone-utils'
 import { useTimeFormat } from '@/components/theme-provider'
 import { Badge } from '@/components/ui/badge'
+import { TableBody, TableCell, TableRow } from '@/components/ui/table'
 import { TimeRow } from '@/hooks/use-time-rows'
 
 interface TimezoneTableBodyProps {
@@ -24,9 +25,9 @@ export function TimezoneTableBody({
 	const otherColumns = dynamicColumns.filter((tz) => tz !== baseTimezone)
 
 	return (
-		<tbody>
+		<TableBody>
 			{timeRows.map((row) => (
-				<tr
+				<TableRow
 					key={row.index}
 					className={`border-b transition-all duration-200 cursor-pointer group relative
 						${row.index % 2 === 0 ? 'bg-table-row-even' : 'bg-table-row-odd'}
@@ -49,8 +50,8 @@ export function TimezoneTableBody({
 					}
 					onClick={() => onRowClick(row.index)}
 				>
-					<td
-						className={`p-3 font-medium transition-colors duration-150 ${
+					<TableCell
+						className={`px-4 py-3 font-medium transition-colors duration-150 ${
 							row.isCurrentTime ? 'font-semibold' : ''
 						}`}
 					>
@@ -89,11 +90,11 @@ export function TimezoneTableBody({
 								</Badge>
 							)}
 						</div>
-					</td>
+					</TableCell>
 					{otherColumns.map((timezone) => (
-						<td
+						<TableCell
 							key={timezone}
-							className={`p-3 text-center transition-colors duration-150 ${
+							className={`px-4 py-3 text-center transition-colors duration-150 ${
 								row.isCurrentTime ? 'font-semibold' : ''
 							}`}
 							style={{
@@ -102,10 +103,10 @@ export function TimezoneTableBody({
 							}}
 						>
 							{formatTime(row.times[timezone], timeFormat)}
-						</td>
+						</TableCell>
 					))}
-				</tr>
+				</TableRow>
 			))}
-		</tbody>
+		</TableBody>
 	)
 }

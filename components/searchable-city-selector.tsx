@@ -1,18 +1,23 @@
 'use client'
 
-import { Plus } from 'lucide-react'
+import { Plus, ChevronDown } from 'lucide-react'
 import { useTimeFormat } from '@/components/theme-provider'
-import { useState, useMemo, useCallback } from 'react'
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-	SelectGroup,
-	SelectLabel,
-} from '@/components/ui/select'
+	useState,
+	useMemo,
+	useCallback,
+	useDeferredValue,
+	useRef,
+	useEffect,
+} from 'react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
 	getCitiesByRegionMemoized,
 	getTimezoneInfoMemoized,
@@ -32,87 +37,100 @@ export function SearchableCitySelector({
 }: SearchableCitySelectorProps) {
 	const { colorScheme } = useTimeFormat()
 	const [searchQuery, setSearchQuery] = useState('')
+	const [isOpen, setIsOpen] = useState(false)
+	const deferredSearchQuery = useDeferredValue(searchQuery)
+	const inputRef = useRef<HTMLInputElement>(null)
 
 	// Memoize the regions data to avoid recalculating on every render
 	const citiesByRegion = useMemo(() => getCitiesByRegionMemoized(), [])
 
+	// Pre-process cities with basic info only (no timezone calculations yet)
+	const allCitiesFlat = useMemo(() => {
+		return Object.entries(citiesByRegion).flatMap(([region, cities]) =>
+			cities.map(({ timezone, info }) => ({
+				timezone,
+				info,
+				region,
+				formattedName: getFormattedCityName(timezone),
+				searchableText: `${info.city} ${info.country} ${getFormattedCityName(
+					timezone
+				)} ${timezone}`.toLowerCase(),
+			}))
+		)
+	}, [citiesByRegion])
+
 	// Filter and process cities based on search query
 	const filteredRegions = useMemo(() => {
-		const query = searchQuery.toLowerCase().trim()
+		const query = deferredSearchQuery.toLowerCase().trim()
+
+		let citiesToShowByRegion: Record<string, typeof allCitiesFlat> = {}
 
 		if (!query) {
-			// If no search query, show all regions but limit to first 20 cities per region for performance
-			return Object.entries(citiesByRegion)
-				.map(([region, cities]) => ({
-					region,
-					cities: cities.slice(0, 20).map(({ timezone, info }) => {
-						const isAlreadyAdded = addedCities.includes(timezone)
-						const tzInfo = isAlreadyAdded
-							? null
-							: getTimezoneInfoMemoized(timezone, selectedDate)
-
-						return {
-							timezone,
-							info,
-							isAlreadyAdded,
-							formattedName: getFormattedCityName(timezone),
-							tzAbbr: tzInfo?.currentName || '',
-						}
-					}),
-				}))
-				.filter((region) => region.cities.length > 0)
-		}
-
-		// Filter cities based on search query
-		const matchingRegions = Object.entries(citiesByRegion)
-			.map(([region, cities]) => {
-				const matchingCities = cities
-					.filter(({ timezone, info }) => {
-						const cityName = info.city.toLowerCase()
-						const countryName = info.country.toLowerCase()
-						const formattedName = getFormattedCityName(timezone).toLowerCase()
-
-						return (
-							cityName.includes(query) ||
-							countryName.includes(query) ||
-							formattedName.includes(query) ||
-							timezone.toLowerCase().includes(query)
-						)
-					})
-					.map(({ timezone, info }) => {
-						const isAlreadyAdded = addedCities.includes(timezone)
-						const tzInfo = isAlreadyAdded
-							? null
-							: getTimezoneInfoMemoized(timezone, selectedDate)
-
-						return {
-							timezone,
-							info,
-							isAlreadyAdded,
-							formattedName: getFormattedCityName(timezone),
-							tzAbbr: tzInfo?.currentName || '',
-						}
-					})
-
-				return {
-					region,
-					cities: matchingCities,
+			// If no search query, show limited cities per region for performance
+			allCitiesFlat.forEach((city) => {
+				if (!citiesToShowByRegion[city.region]) {
+					citiesToShowByRegion[city.region] = []
+				}
+				if (citiesToShowByRegion[city.region].length < 15) {
+					// Limit to 15 cities per region when no search
+					citiesToShowByRegion[city.region].push(city)
 				}
 			})
-			.filter((region) => region.cities.length > 0)
+		} else {
+			// Filter cities based on search query - much faster now
+			const matchingCities = allCitiesFlat
+				.filter((city) => city.searchableText.includes(query))
+				.slice(0, 100) // Limit total results to 100 for performance
 
-		return matchingRegions
-	}, [citiesByRegion, addedCities, selectedDate, searchQuery])
+			matchingCities.forEach((city) => {
+				if (!citiesToShowByRegion[city.region]) {
+					citiesToShowByRegion[city.region] = []
+				}
+				citiesToShowByRegion[city.region].push(city)
+			})
+		}
+
+		// Only now calculate timezone info for cities that will be displayed
+		return Object.entries(citiesToShowByRegion)
+			.map(([region, cities]) => ({
+				region,
+				cities: cities.map((city) => {
+					const isAlreadyAdded = addedCities.includes(city.timezone)
+					const tzInfo = isAlreadyAdded
+						? null
+						: getTimezoneInfoMemoized(city.timezone, selectedDate)
+
+					return {
+						timezone: city.timezone,
+						info: city.info,
+						isAlreadyAdded,
+						formattedName: city.formattedName,
+						tzAbbr: tzInfo?.currentName || '',
+					}
+				}),
+			}))
+			.filter((region) => region.cities.length > 0)
+	}, [allCitiesFlat, addedCities, selectedDate, deferredSearchQuery])
 
 	const handleCitySelect = useCallback(
 		(timezone: string) => {
 			if (!addedCities.includes(timezone)) {
 				onCityAdd(timezone)
 				setSearchQuery('') // Clear search after selection
+				setIsOpen(false) // Close the popover
 			}
 		},
 		[addedCities, onCityAdd]
 	)
+
+	// Focus input when popover opens
+	useEffect(() => {
+		if (isOpen && inputRef.current) {
+			setTimeout(() => {
+				inputRef.current?.focus()
+			}, 100)
+		}
+	}, [isOpen])
 
 	const totalCities = filteredRegions.reduce(
 		(sum, region) => sum + region.cities.length,
@@ -125,60 +143,72 @@ export function SearchableCitySelector({
 				<Plus className='h-4 w-4' style={{ color: colorScheme.primary }} />
 				<span>Add City:</span>
 			</div>
-			<Select value='' onValueChange={handleCitySelect}>
-				<SelectTrigger
-					className='w-56 bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
-					style={
-						{
-							borderColor: colorScheme.primary + '40',
-							'--tw-ring-color': colorScheme.primary,
-						} as React.CSSProperties
-					}
-				>
-					<SelectValue placeholder='Select a city to add...' />
-				</SelectTrigger>
-				<SelectContent className='max-h-96'>
-					<div className='px-2 pb-2'>
+			<Popover open={isOpen} onOpenChange={setIsOpen}>
+				<PopoverTrigger asChild>
+					<Button
+						variant='outline'
+						role='combobox'
+						aria-expanded={isOpen}
+						className='w-56 justify-between bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
+						style={
+							{
+								borderColor: colorScheme.primary + '40',
+								'--tw-ring-color': colorScheme.primary,
+							} as React.CSSProperties
+						}
+					>
+						Select a city to add...
+						<ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className='w-56 p-0' align='start'>
+					<div className='p-2 border-b'>
 						<Input
+							ref={inputRef}
 							placeholder='Search cities...'
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 							className='h-8'
 						/>
 					</div>
-					{totalCities === 0 && searchQuery && (
-						<div className='px-3 py-2 text-sm text-muted-foreground text-center'>
-							No cities found matching "{searchQuery}"
-						</div>
-					)}
-					{filteredRegions.map(({ region, cities }) => (
-						<SelectGroup key={region}>
-							<SelectLabel className='text-xs font-semibold text-muted-foreground px-2 py-1'>
-								{region} {searchQuery && `(${cities.length})`}
-							</SelectLabel>
-							{cities.map(
-								({ timezone, formattedName, tzAbbr, isAlreadyAdded }) => (
-									<SelectItem
-										key={timezone}
-										value={timezone}
-										disabled={isAlreadyAdded}
-										className={isAlreadyAdded ? 'opacity-50' : ''}
-									>
-										<div className='flex items-center justify-between w-full'>
-											<span className='truncate'>{formattedName}</span>
-											{!isAlreadyAdded && tzAbbr && (
-												<span className='text-xs text-muted-foreground ml-2 shrink-0'>
-													{tzAbbr}
-												</span>
-											)}
-										</div>
-									</SelectItem>
-								)
-							)}
-						</SelectGroup>
-					))}
-				</SelectContent>
-			</Select>
+					<ScrollArea className='max-h-80'>
+						{totalCities === 0 && deferredSearchQuery && (
+							<div className='px-3 py-2 text-sm text-muted-foreground text-center'>
+								No cities found matching "{deferredSearchQuery}"
+							</div>
+						)}
+						{filteredRegions.map(({ region, cities }) => (
+							<div key={region} className='px-2 py-1'>
+								<div className='text-xs font-semibold text-muted-foreground px-2 py-1 mb-1'>
+									{region} {deferredSearchQuery && `(${cities.length})`}
+								</div>
+								{cities.map(
+									({ timezone, formattedName, tzAbbr, isAlreadyAdded }) => (
+										<Button
+											key={timezone}
+											variant='ghost'
+											disabled={isAlreadyAdded}
+											onClick={() => handleCitySelect(timezone)}
+											className={`w-full justify-start h-auto p-2 text-left ${
+												isAlreadyAdded ? 'opacity-50' : ''
+											}`}
+										>
+											<div className='flex items-center justify-between w-full'>
+												<span className='truncate'>{formattedName}</span>
+												{!isAlreadyAdded && tzAbbr && (
+													<span className='text-xs text-muted-foreground ml-2 shrink-0'>
+														{tzAbbr}
+													</span>
+												)}
+											</div>
+										</Button>
+									)
+								)}
+							</div>
+						))}
+					</ScrollArea>
+				</PopoverContent>
+			</Popover>
 		</div>
 	)
 }

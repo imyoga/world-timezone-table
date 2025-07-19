@@ -143,17 +143,13 @@ export function TimezoneModal({
 														<Copy className='h-3 w-3' />
 													)}
 
-													{/* Tooltip */}
-													<div
-														className={`absolute bottom-full right-0 mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md border border-border transition-all duration-200 whitespace-nowrap z-10 ${
-															copiedTimezone === timezone
-																? 'opacity-100 translate-y-0'
-																: 'opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0'
-														}`}
-													>
-														{copiedTimezone === timezone ? 'Copied!' : 'Copy'}
-														<div className='absolute top-full right-2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-border'></div>
-													</div>
+													{/* Tooltip - only show after copy */}
+													{copiedTimezone === timezone && (
+														<div className='absolute bottom-full right-0 mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md border border-border transition-all duration-200 whitespace-nowrap z-10 opacity-100 translate-y-0'>
+															Copied!
+															<div className='absolute top-full right-2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-border'></div>
+														</div>
+													)}
 												</button>
 											</div>
 										</div>

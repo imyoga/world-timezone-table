@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { Globe } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Table } from '@/components/ui/table'
 import { TimezoneSelect } from '@/components/timezone-select'
 import { DatePicker } from '@/components/date-picker'
 import { TimeFormatSelect } from '@/components/time-format-select'
@@ -147,35 +148,31 @@ export default function WorldTimezoneTable() {
 						/>
 					</div>
 				</div>
-
 				{/* Table */}
-				<Card className='overflow-hidden'>
-					<CardContent className='p-0'>
-						<div className='overflow-x-auto'>
-							<table className='w-full'>
-								<TimezoneTableHeader
-									baseTimezone={baseTimezone}
-									baseTimezoneInfo={baseTimezoneInfo}
-									selectedDate={selectedDate}
-									currentTime={currentTime}
-									timeFormat={timeFormat}
-									isClient={isClient}
-									dynamicColumns={dynamicColumns}
-									onRemoveColumn={handleRemoveColumn}
-								/>
-								<TimezoneTableBody
-									timeRows={timeRows}
-									baseTimezone={baseTimezone}
-									selectedDate={selectedDate}
-									timeFormat={timeFormat}
-									onRowClick={handleRowClick}
-									dynamicColumns={dynamicColumns}
-								/>
-							</table>
-						</div>
+				<Card className='overflow-visible'>
+					<CardContent className='p-0 overflow-hidden'>
+						<Table>
+							<TimezoneTableHeader
+								baseTimezone={baseTimezone}
+								baseTimezoneInfo={baseTimezoneInfo}
+								selectedDate={selectedDate}
+								currentTime={currentTime}
+								timeFormat={timeFormat}
+								isClient={isClient}
+								dynamicColumns={dynamicColumns}
+								onRemoveColumn={handleRemoveColumn}
+							/>
+							<TimezoneTableBody
+								timeRows={timeRows}
+								baseTimezone={baseTimezone}
+								selectedDate={selectedDate}
+								timeFormat={timeFormat}
+								onRowClick={handleRowClick}
+								dynamicColumns={dynamicColumns}
+							/>
+						</Table>
 					</CardContent>
-				</Card>
-
+				</Card>{' '}
 				{/* Modal */}
 				<TimezoneModal
 					isOpen={selectedRow !== null}
