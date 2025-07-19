@@ -149,7 +149,7 @@ export function SearchableCitySelector({
 						variant='outline'
 						role='combobox'
 						aria-expanded={isOpen}
-						className='w-56 justify-between bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
+						className='w-64 justify-between bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
 						style={
 							{
 								borderColor: colorScheme.primary + '40',
@@ -161,7 +161,7 @@ export function SearchableCitySelector({
 						<ChevronDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 					</Button>
 				</PopoverTrigger>
-				<PopoverContent className='w-56 p-0' align='start'>
+				<PopoverContent className='w-80 p-0' align='start'>
 					<div className='p-2 border-b'>
 						<Input
 							ref={inputRef}
@@ -171,41 +171,45 @@ export function SearchableCitySelector({
 							className='h-8'
 						/>
 					</div>
-					<ScrollArea className='max-h-80'>
+					<ScrollArea className='max-h-80 overflow-y-auto'>
 						{totalCities === 0 && deferredSearchQuery && (
 							<div className='px-3 py-2 text-sm text-muted-foreground text-center'>
 								No cities found matching "{deferredSearchQuery}"
 							</div>
 						)}
-						{filteredRegions.map(({ region, cities }) => (
-							<div key={region} className='px-2 py-1'>
-								<div className='text-xs font-semibold text-muted-foreground px-2 py-1 mb-1'>
-									{region} {deferredSearchQuery && `(${cities.length})`}
-								</div>
-								{cities.map(
-									({ timezone, formattedName, tzAbbr, isAlreadyAdded }) => (
-										<Button
-											key={timezone}
-											variant='ghost'
-											disabled={isAlreadyAdded}
-											onClick={() => handleCitySelect(timezone)}
-											className={`w-full justify-start h-auto p-2 text-left ${
-												isAlreadyAdded ? 'opacity-50' : ''
-											}`}
-										>
-											<div className='flex items-center justify-between w-full'>
-												<span className='truncate'>{formattedName}</span>
-												{!isAlreadyAdded && tzAbbr && (
-													<span className='text-xs text-muted-foreground ml-2 shrink-0'>
-														{tzAbbr}
+						<div className='pb-2'>
+							{filteredRegions.map(({ region, cities }) => (
+								<div key={region} className='px-2 py-1'>
+									<div className='text-xs font-semibold text-muted-foreground px-2 py-1 mb-1'>
+										{region} {deferredSearchQuery && `(${cities.length})`}
+									</div>
+									{cities.map(
+										({ timezone, formattedName, tzAbbr, isAlreadyAdded }) => (
+											<Button
+												key={timezone}
+												variant='ghost'
+												disabled={isAlreadyAdded}
+												onClick={() => handleCitySelect(timezone)}
+												className={`w-full justify-start h-auto p-2 text-left min-h-[2.5rem] ${
+													isAlreadyAdded ? 'opacity-50' : ''
+												}`}
+											>
+												<div className='flex items-center justify-between w-full min-w-0'>
+													<span className='truncate flex-1 text-sm'>
+														{formattedName}
 													</span>
-												)}
-											</div>
-										</Button>
-									)
-								)}
-							</div>
-						))}
+													{!isAlreadyAdded && tzAbbr && (
+														<span className='text-xs text-muted-foreground ml-2 shrink-0'>
+															{tzAbbr}
+														</span>
+													)}
+												</div>
+											</Button>
+										)
+									)}
+								</div>
+							))}
+						</div>
 					</ScrollArea>
 				</PopoverContent>
 			</Popover>
