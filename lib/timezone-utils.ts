@@ -16,26 +16,133 @@ export interface ExtendedTimezoneInfo extends TimezoneInfo {
 export const COUNTRY_FLAGS: Record<string, string> = {
   "US": "\uD83C\uDDFA\uD83C\uDDF8", // 🇺🇸
   "CA": "\uD83C\uDDE8\uD83C\uDDE6", // 🇨🇦
+  "MX": "\uD83C\uDDF2\uD83C\uDDFD", // 🇲🇽
+  "BR": "\uD83C\uDDE7\uD83C\uDDF7", // 🇧🇷
+  "AR": "\uD83C\uDDE6\uD83C\uDDF7", // 🇦🇷
+  "PE": "\uD83C\uDDF5\uD83C\uDDEA", // 🇵🇪
+  "CO": "\uD83C\uDDE8\uD83C\uDDF4", // 🇨🇴
+  "CL": "\uD83C\uDDE8\uD83C\uDDF1", // 🇨🇱
   "GB": "\uD83C\uDDEC\uD83C\uDDE7", // 🇬🇧
-  "AE": "\uD83C\uDDE6\uD83C\uDDEA", // 🇦🇪
+  "IE": "\uD83C\uDDEE\uD83C\uDDEA", // 🇮🇪
+  "PT": "\uD83C\uDDF5\uD83C\uDDF9", // 🇵🇹
+  "ES": "\uD83C\uDDEA\uD83C\uDDF8", // 🇪🇸
+  "FR": "\uD83C\uDDEB\uD83C\uDDF7", // 🇫🇷
+  "NL": "\uD83C\uDDF3\uD83C\uDDF1", // 🇳🇱
+  "BE": "\uD83C\uDDE7\uD83C\uDDEA", // 🇧🇪
+  "DE": "\uD83C\uDDE9\uD83C\uDDEA", // 🇩🇪
+  "IT": "\uD83C\uDDEE\uD83C\uDDF9", // 🇮🇹
+  "AT": "\uD83C\uDDE6\uD83C\uDDF9", // 🇦🇹
+  "CH": "\uD83C\uDDE8\uD83C\uDDED", // 🇨🇭
+  "SE": "\uD83C\uDDF8\uD83C\uDDEA", // �🇪
+  "NO": "\uD83C\uDDF3\uD83C\uDDF4", // 🇳🇴
+  "DK": "\uD83C\uDDE9\uD83C\uDDF0", // 🇩🇰
+  "FI": "\uD83C\uDDEB\uD83C\uDDEE", // 🇫🇮
+  "PL": "\uD83C\uDDF5\uD83C\uDDF1", // 🇵🇱
+  "CZ": "\uD83C\uDDE8\uD83C\uDDFF", // 🇨🇿
+  "HU": "\uD83C\uDDED\uD83C\uDDFA", // 🇭🇺
+  "RO": "\uD83C\uDDF7\uD83C\uDDF4", // 🇷🇴
+  "GR": "\uD83C\uDDEC\uD83C\uDDF7", // 🇬🇷
+  "TR": "\uD83C\uDDF9\uD83C\uDDF7", // 🇹🇷
+  "RU": "\uD83C\uDDF7\uD83C\uDDFA", // 🇷🇺
+  "AE": "\uD83C\uDDE6\uD83C\uDDEA", // �🇦🇪
+  "QA": "\uD83C\uDDF6\uD83C\uDDE6", // 🇶🇦
+  "KW": "\uD83C\uDDF0\uD83C\uDDFC", // 🇰🇼
+  "SA": "\uD83C\uDDF8\uD83C\uDDE6", // 🇸🇦
+  "IR": "\uD83C\uDDEE\uD83C\uDDF7", // 🇮🇷
+  "IL": "\uD83C\uDDEE\uD83C\uDDF1", // 🇮🇱
   "IN": "\uD83C\uDDEE\uD83C\uDDF3", // 🇮🇳
+  "PK": "\uD83C\uDDF5\uD83C\uDDF0", // 🇵🇰
+  "BD": "\uD83C\uDDE7\uD83C\uDDE9", // 🇧🇩
+  "LK": "\uD83C\uDDF1\uD83C\uDDF0", // 🇱🇰
+  "TH": "\uD83C\uDDF9\uD83C\uDDED", // 🇹🇭
+  "SG": "\uD83C\uDDF8\uD83C\uDDEC", // 🇸🇬
+  "MY": "\uD83C\uDDF2\uD83C\uDDFE", // 🇲🇾
+  "ID": "\uD83C\uDDEE\uD83C\uDDE9", // 🇮�
+  "PH": "\uD83C\uDDF5\uD83C\uDDED", // 🇵🇭
+  "VN": "\uD83C\uDDFB\uD83C\uDDF3", // 🇻�🇳
   "JP": "\uD83C\uDDEF\uD83C\uDDF5", // 🇯🇵
+  "KR": "\uD83C\uDDF0\uD83C\uDDF7", // 🇰🇷
+  "CN": "\uD83C\uDDE8\uD83C\uDDF3", // 🇨🇳
+  "HK": "\uD83C\uDDED\uD83C\uDDF0", // 🇭🇰
+  "TW": "\uD83C\uDDF9\uD83C\uDDFC", // 🇹🇼
+  "KZ": "\uD83C\uDDF0\uD83C\uDDFF", // 🇰🇿
+  "UZ": "\uD83C\uDDFA\uD83C\uDDFF", // 🇺🇿
   "AU": "\uD83C\uDDE6\uD83C\uDDFA", // 🇦🇺
+  "NZ": "\uD83C\uDDF3\uD83C\uDDFF", // 🇳🇿
+  "EG": "\uD83C\uDDEA\uD83C\uDDEC", // 🇪🇬
+  "NG": "\uD83C\uDDF3\uD83C\uDDEC", // 🇳🇬
+  "ZA": "\uD83C\uDDFF\uD83C\uDDE6", // 🇿🇦
+  "MA": "\uD83C\uDDF2\uD83C\uDDE6", // 🇲🇦
+  "KE": "\uD83C\uDDF0\uD83C\uDDEA", // 🇰🇪
 }
 
 // Fallback country name mapping if flags don't render
 export const COUNTRY_NAMES: Record<string, string> = {
   "US": "USA",
   "CA": "Canada", 
+  "MX": "Mexico",
+  "BR": "Brazil",
+  "AR": "Argentina",
+  "PE": "Peru",
+  "CO": "Colombia",
+  "CL": "Chile",
   "GB": "UK",
+  "IE": "Ireland",
+  "PT": "Portugal",
+  "ES": "Spain",
+  "FR": "France",
+  "NL": "Netherlands",
+  "BE": "Belgium",
+  "DE": "Germany",
+  "IT": "Italy",
+  "AT": "Austria",
+  "CH": "Switzerland",
+  "SE": "Sweden",
+  "NO": "Norway",
+  "DK": "Denmark",
+  "FI": "Finland",
+  "PL": "Poland",
+  "CZ": "Czech Republic",
+  "HU": "Hungary",
+  "RO": "Romania",
+  "GR": "Greece",
+  "TR": "Turkey",
+  "RU": "Russia",
   "AE": "UAE",
+  "QA": "Qatar",
+  "KW": "Kuwait",
+  "SA": "Saudi Arabia",
+  "IR": "Iran",
+  "IL": "Israel",
   "IN": "India",
+  "PK": "Pakistan",
+  "BD": "Bangladesh",
+  "LK": "Sri Lanka",
+  "TH": "Thailand",
+  "SG": "Singapore",
+  "MY": "Malaysia",
+  "ID": "Indonesia",
+  "PH": "Philippines",
+  "VN": "Vietnam",
   "JP": "Japan",
+  "KR": "South Korea",
+  "CN": "China",
+  "HK": "Hong Kong",
+  "TW": "Taiwan",
+  "KZ": "Kazakhstan",
+  "UZ": "Uzbekistan",
   "AU": "Australia",
+  "NZ": "New Zealand",
+  "EG": "Egypt",
+  "NG": "Nigeria",
+  "ZA": "South Africa",
+  "MA": "Morocco",
+  "KE": "Kenya",
 }
 
-// Minimal hardcoded data - only what we can't derive automatically
+// Comprehensive list of world cities with their timezones
 export const TIMEZONES: Record<string, TimezoneInfo> = {
+  // North America - USA
   "America/New_York": {
     name: "Eastern",
     country: "US",
@@ -60,54 +167,474 @@ export const TIMEZONES: Record<string, TimezoneInfo> = {
     city: "Los Angeles", 
     timezone: "America/Los_Angeles",
   },
+  "America/Phoenix": {
+    name: "Mountain",
+    country: "US",
+    city: "Phoenix",
+    timezone: "America/Phoenix",
+  },
+  "America/Anchorage": {
+    name: "Alaska",
+    country: "US",
+    city: "Anchorage",
+    timezone: "America/Anchorage",
+  },
+  "Pacific/Honolulu": {
+    name: "Hawaii",
+    country: "US",
+    city: "Honolulu",
+    timezone: "Pacific/Honolulu",
+  },
+  
+  // North America - Canada
+  "America/Toronto": {
+    name: "Eastern",
+    country: "CA",
+    city: "Toronto",
+    timezone: "America/Toronto",
+  },
+  "America/Montreal": {
+    name: "Eastern",
+    country: "CA",
+    city: "Montreal",
+    timezone: "America/Montreal",
+  },
+  "America/Vancouver": {
+    name: "Pacific",
+    country: "CA",
+    city: "Vancouver",
+    timezone: "America/Vancouver",
+  },
   "America/Edmonton": {
     name: "Mountain",
     country: "CA",
     city: "Edmonton",
     timezone: "America/Edmonton",
   },
+  "America/Calgary": {
+    name: "Mountain",
+    country: "CA",
+    city: "Calgary",
+    timezone: "America/Edmonton", // Calgary uses Edmonton timezone
+  },
+  "America/Winnipeg": {
+    name: "Central",
+    country: "CA",
+    city: "Winnipeg",
+    timezone: "America/Winnipeg",
+  },
+  
+  // North America - Mexico
+  "America/Mexico_City": {
+    name: "Central",
+    country: "MX",
+    city: "Mexico City",
+    timezone: "America/Mexico_City",
+  },
+  "America/Cancun": {
+    name: "Eastern",
+    country: "MX",
+    city: "Cancun",
+    timezone: "America/Cancun",
+  },
+  "America/Tijuana": {
+    name: "Pacific",
+    country: "MX",
+    city: "Tijuana",
+    timezone: "America/Tijuana",
+  },
+
+  // South America
+  "America/Sao_Paulo": {
+    name: "Brasilia",
+    country: "BR",
+    city: "São Paulo",
+    timezone: "America/Sao_Paulo",
+  },
+  "America/Buenos_Aires": {
+    name: "Argentina",
+    country: "AR",
+    city: "Buenos Aires",
+    timezone: "America/Buenos_Aires",
+  },
+  "America/Lima": {
+    name: "Peru",
+    country: "PE",
+    city: "Lima",
+    timezone: "America/Lima",
+  },
+  "America/Bogota": {
+    name: "Colombia",
+    country: "CO",
+    city: "Bogotá",
+    timezone: "America/Bogota",
+  },
+  "America/Santiago": {
+    name: "Chile",
+    country: "CL",
+    city: "Santiago",
+    timezone: "America/Santiago",
+  },
+  
+  // Europe - Western
   "Europe/London": {
     name: "Greenwich",
     country: "GB",
     city: "London",
     timezone: "Europe/London",
   },
+  "Europe/Dublin": {
+    name: "Greenwich",
+    country: "IE",
+    city: "Dublin",
+    timezone: "Europe/Dublin",
+  },
+  "Europe/Lisbon": {
+    name: "Western European",
+    country: "PT",
+    city: "Lisbon",
+    timezone: "Europe/Lisbon",
+  },
+  "Europe/Madrid": {
+    name: "Central European",
+    country: "ES",
+    city: "Madrid",
+    timezone: "Europe/Madrid",
+  },
+  "Europe/Paris": {
+    name: "Central European",
+    country: "FR",
+    city: "Paris",
+    timezone: "Europe/Paris",
+  },
+  "Europe/Amsterdam": {
+    name: "Central European",
+    country: "NL",
+    city: "Amsterdam",
+    timezone: "Europe/Amsterdam",
+  },
+  "Europe/Brussels": {
+    name: "Central European",
+    country: "BE",
+    city: "Brussels",
+    timezone: "Europe/Brussels",
+  },
+  "Europe/Berlin": {
+    name: "Central European",
+    country: "DE",
+    city: "Berlin",
+    timezone: "Europe/Berlin",
+  },
+  "Europe/Rome": {
+    name: "Central European",
+    country: "IT",
+    city: "Rome",
+    timezone: "Europe/Rome",
+  },
+  "Europe/Vienna": {
+    name: "Central European",
+    country: "AT",
+    city: "Vienna",
+    timezone: "Europe/Vienna",
+  },
+  "Europe/Zurich": {
+    name: "Central European",
+    country: "CH",
+    city: "Zurich",
+    timezone: "Europe/Zurich",
+  },
+  
+  // Europe - Nordic
+  "Europe/Stockholm": {
+    name: "Central European",
+    country: "SE",
+    city: "Stockholm",
+    timezone: "Europe/Stockholm",
+  },
+  "Europe/Oslo": {
+    name: "Central European",
+    country: "NO",
+    city: "Oslo",
+    timezone: "Europe/Oslo",
+  },
+  "Europe/Copenhagen": {
+    name: "Central European",
+    country: "DK",
+    city: "Copenhagen",
+    timezone: "Europe/Copenhagen",
+  },
+  "Europe/Helsinki": {
+    name: "Eastern European",
+    country: "FI",
+    city: "Helsinki",
+    timezone: "Europe/Helsinki",
+  },
+  
+  // Europe - Eastern
+  "Europe/Warsaw": {
+    name: "Central European",
+    country: "PL",
+    city: "Warsaw",
+    timezone: "Europe/Warsaw",
+  },
+  "Europe/Prague": {
+    name: "Central European",
+    country: "CZ",
+    city: "Prague",
+    timezone: "Europe/Prague",
+  },
+  "Europe/Budapest": {
+    name: "Central European",
+    country: "HU",
+    city: "Budapest",
+    timezone: "Europe/Budapest",
+  },
+  "Europe/Bucharest": {
+    name: "Eastern European",
+    country: "RO",
+    city: "Bucharest",
+    timezone: "Europe/Bucharest",
+  },
+  "Europe/Athens": {
+    name: "Eastern European",
+    country: "GR",
+    city: "Athens",
+    timezone: "Europe/Athens",
+  },
+  "Europe/Istanbul": {
+    name: "Turkey",
+    country: "TR",
+    city: "Istanbul",
+    timezone: "Europe/Istanbul",
+  },
+  "Europe/Moscow": {
+    name: "Moscow",
+    country: "RU",
+    city: "Moscow",
+    timezone: "Europe/Moscow",
+  },
+  
+  // Asia - Middle East
   "Asia/Dubai": {
     name: "Gulf",
     country: "AE",
     city: "Dubai",
     timezone: "Asia/Dubai",
   },
+  "Asia/Qatar": {
+    name: "Arabia",
+    country: "QA",
+    city: "Doha",
+    timezone: "Asia/Qatar",
+  },
+  "Asia/Kuwait": {
+    name: "Arabia",
+    country: "KW",
+    city: "Kuwait City",
+    timezone: "Asia/Kuwait",
+  },
+  "Asia/Riyadh": {
+    name: "Arabia",
+    country: "SA",
+    city: "Riyadh",
+    timezone: "Asia/Riyadh",
+  },
+  "Asia/Tehran": {
+    name: "Iran",
+    country: "IR",
+    city: "Tehran",
+    timezone: "Asia/Tehran",
+  },
+  "Asia/Jerusalem": {
+    name: "Israel",
+    country: "IL",
+    city: "Jerusalem",
+    timezone: "Asia/Jerusalem",
+  },
+  
+  // Asia - South Asia
   "Asia/Kolkata": {
     name: "India",
     country: "IN",
-    city: "Kolkata",
+    city: "Mumbai",
     timezone: "Asia/Kolkata",
   },
+  "Asia/Karachi": {
+    name: "Pakistan",
+    country: "PK",
+    city: "Karachi",
+    timezone: "Asia/Karachi",
+  },
+  "Asia/Dhaka": {
+    name: "Bangladesh",
+    country: "BD",
+    city: "Dhaka",
+    timezone: "Asia/Dhaka",
+  },
+  "Asia/Colombo": {
+    name: "Sri Lanka",
+    country: "LK",
+    city: "Colombo",
+    timezone: "Asia/Colombo",
+  },
+  
+  // Asia - Southeast Asia
+  "Asia/Bangkok": {
+    name: "Indochina",
+    country: "TH",
+    city: "Bangkok",
+    timezone: "Asia/Bangkok",
+  },
+  "Asia/Singapore": {
+    name: "Singapore",
+    country: "SG",
+    city: "Singapore",
+    timezone: "Asia/Singapore",
+  },
+  "Asia/Kuala_Lumpur": {
+    name: "Malaysia",
+    country: "MY",
+    city: "Kuala Lumpur",
+    timezone: "Asia/Kuala_Lumpur",
+  },
+  "Asia/Jakarta": {
+    name: "Western Indonesia",
+    country: "ID",
+    city: "Jakarta",
+    timezone: "Asia/Jakarta",
+  },
+  "Asia/Manila": {
+    name: "Philippines",
+    country: "PH",
+    city: "Manila",
+    timezone: "Asia/Manila",
+  },
+  "Asia/Ho_Chi_Minh": {
+    name: "Indochina",
+    country: "VN",
+    city: "Ho Chi Minh City",
+    timezone: "Asia/Ho_Chi_Minh",
+  },
+  
+  // Asia - East Asia
   "Asia/Tokyo": {
     name: "Japan",
     country: "JP",
     city: "Tokyo",
     timezone: "Asia/Tokyo",
   },
+  "Asia/Seoul": {
+    name: "Korea",
+    country: "KR",
+    city: "Seoul",
+    timezone: "Asia/Seoul",
+  },
+  "Asia/Shanghai": {
+    name: "China",
+    country: "CN",
+    city: "Shanghai",
+    timezone: "Asia/Shanghai",
+  },
+  "Asia/Hong_Kong": {
+    name: "Hong Kong",
+    country: "HK",
+    city: "Hong Kong",
+    timezone: "Asia/Hong_Kong",
+  },
+  "Asia/Taipei": {
+    name: "Taiwan",
+    country: "TW",
+    city: "Taipei",
+    timezone: "Asia/Taipei",
+  },
+  
+  // Asia - Central Asia
+  "Asia/Almaty": {
+    name: "East Kazakhstan",
+    country: "KZ",
+    city: "Almaty",
+    timezone: "Asia/Almaty",
+  },
+  "Asia/Tashkent": {
+    name: "Uzbekistan",
+    country: "UZ",
+    city: "Tashkent",
+    timezone: "Asia/Tashkent",
+  },
+  
+  // Oceania
   "Australia/Sydney": {
     name: "Australian Eastern",
     country: "AU",
     city: "Sydney",
     timezone: "Australia/Sydney",
   },
+  "Australia/Melbourne": {
+    name: "Australian Eastern",
+    country: "AU",
+    city: "Melbourne",
+    timezone: "Australia/Melbourne",
+  },
+  "Australia/Brisbane": {
+    name: "Australian Eastern",
+    country: "AU",
+    city: "Brisbane",
+    timezone: "Australia/Brisbane",
+  },
+  "Australia/Perth": {
+    name: "Australian Western",
+    country: "AU",
+    city: "Perth",
+    timezone: "Australia/Perth",
+  },
+  "Pacific/Auckland": {
+    name: "New Zealand",
+    country: "NZ",
+    city: "Auckland",
+    timezone: "Pacific/Auckland",
+  },
+  
+  // Africa
+  "Africa/Cairo": {
+    name: "Eastern European",
+    country: "EG",
+    city: "Cairo",
+    timezone: "Africa/Cairo",
+  },
+  "Africa/Lagos": {
+    name: "West Africa",
+    country: "NG",
+    city: "Lagos",
+    timezone: "Africa/Lagos",
+  },
+  "Africa/Johannesburg": {
+    name: "South Africa",
+    country: "ZA",
+    city: "Johannesburg",
+    timezone: "Africa/Johannesburg",
+  },
+  "Africa/Casablanca": {
+    name: "Western European",
+    country: "MA",
+    city: "Casablanca",
+    timezone: "Africa/Casablanca",
+  },
+  "Africa/Nairobi": {
+    name: "East Africa",
+    country: "KE",
+    city: "Nairobi",
+    timezone: "Africa/Nairobi",
+  },
 }
 
 export const DEFAULT_COLUMNS = [
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "Europe/London",
-  "Asia/Dubai",
-  "Asia/Kolkata",
-  "Asia/Tokyo",
-  "Australia/Sydney",
+  "America/New_York",      // New York
+  "America/Calgary",       // Calgary
+  "America/Chicago",       // Chicago
+  "Europe/London",         // London UK
+  "Asia/Dubai",           // Dubai
+  "Asia/Kolkata",         // India
+  "Australia/Sydney",     // Sydney Australia
 ]
 
 export const isDSTActive = (date: Date, timezone: string): boolean => {
@@ -273,9 +800,12 @@ export const formatTime = (date: Date, format: "12h" | "24h", includeSeconds: bo
 
 export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDate: Date, baseTimezone?: string): Date => {
   try {
+    const actualTimezone = getActualTimezone(timezone)
+    const actualBaseTimezone = baseTimezone ? getActualTimezone(baseTimezone) : undefined
+    
     // If we have a base timezone, we need to convert from base timezone to target timezone
-    if (baseTimezone && baseTimezone !== timezone) {
-      return convertTimeBetweenTimezones(baseTime, baseTimezone, timezone, selectedDate)
+    if (actualBaseTimezone && actualBaseTimezone !== actualTimezone) {
+      return convertTimeBetweenTimezones(baseTime, actualBaseTimezone, actualTimezone, selectedDate)
     }
     
     // Original logic for when no base timezone is specified
@@ -285,7 +815,7 @@ export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDat
     
     // Method 1: Use Intl.DateTimeFormat to get the time in the target timezone
     const formatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: timezone,
+      timeZone: actualTimezone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -317,7 +847,7 @@ export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDat
     }
     
     // Method 2: Fallback using offset calculation
-    const offset = getTimezoneOffset(selectedDateTime, timezone)
+    const offset = getTimezoneOffset(selectedDateTime, actualTimezone)
     const utcTime = selectedDateTime.getTime() - (selectedDateTime.getTimezoneOffset() * 60 * 1000)
     const targetTime = new Date(utcTime + (offset * 60 * 60 * 1000))
     
@@ -340,17 +870,20 @@ export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDat
 // New function to convert time between specific timezones
 export const convertTimeBetweenTimezones = (localTime: Date, fromTimezone: string, toTimezone: string, selectedDate: Date): Date => {
   try {
+    const actualFromTimezone = getActualTimezone(fromTimezone)
+    const actualToTimezone = getActualTimezone(toTimezone)
+    
     // Create a date object representing the time in the source timezone on the selected date
     const sourceDateTime = new Date(selectedDate)
     sourceDateTime.setHours(localTime.getHours(), localTime.getMinutes(), localTime.getSeconds(), 0)
     
     // Convert to a string in the source timezone, then parse it as UTC to get the "wall clock" time
-    const sourceTimeString = sourceDateTime.toLocaleString('sv-SE', { timeZone: fromTimezone })
+    const sourceTimeString = sourceDateTime.toLocaleString('sv-SE', { timeZone: actualFromTimezone })
     const sourceAsUTC = new Date(sourceTimeString + 'Z')
     
     // Get the offset difference between source and target timezones
-    const sourceOffset = getTimezoneOffset(sourceDateTime, fromTimezone)
-    const targetOffset = getTimezoneOffset(sourceDateTime, toTimezone)
+    const sourceOffset = getTimezoneOffset(sourceDateTime, actualFromTimezone)
+    const targetOffset = getTimezoneOffset(sourceDateTime, actualToTimezone)
     const offsetDifferenceMs = (targetOffset - sourceOffset) * 60 * 60 * 1000
     
     // Apply the offset difference
@@ -368,7 +901,7 @@ export const convertTimeBetweenTimezones = (localTime: Date, fromTimezone: strin
     
     // Get what this time would be in UTC if it were in the source timezone
     const sourceFormatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: fromTimezone,
+      timeZone: actualFromTimezone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -383,7 +916,7 @@ export const convertTimeBetweenTimezones = (localTime: Date, fromTimezone: strin
     
     // Convert this UTC time to the target timezone
     const targetFormatter = new Intl.DateTimeFormat('en-CA', {
-      timeZone: toTimezone,
+      timeZone: actualToTimezone,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -419,11 +952,19 @@ export const convertTimeBetweenTimezones = (localTime: Date, fromTimezone: strin
   }
 }
 
+// Helper function to get the actual timezone for calculations
+// Some cities like Calgary use different cities' timezones
+export const getActualTimezone = (timezone: string): string => {
+  const info = TIMEZONES[timezone]
+  return info?.timezone || timezone
+}
+
 export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedTimezoneInfo => {
   const info = TIMEZONES[timezone]
-  const isDST = isDSTActive(selectedDate, timezone)
-  const offset = getTimezoneOffset(selectedDate, timezone)
-  const currentName = getTimezoneAbbreviation(selectedDate, timezone)
+  const actualTimezone = getActualTimezone(timezone)
+  const isDST = isDSTActive(selectedDate, actualTimezone)
+  const offset = getTimezoneOffset(selectedDate, actualTimezone)
+  const currentName = getTimezoneAbbreviation(selectedDate, actualTimezone)
 
   return {
     ...info,
@@ -485,4 +1026,100 @@ export const copyToClipboard = async (text: string): Promise<void> => {
     document.execCommand("copy")
     document.body.removeChild(textArea)
   }
+}
+
+// Get all cities sorted by region and then by city name
+export const getCitiesByRegion = (): Record<string, Array<{ timezone: string; info: TimezoneInfo }>> => {
+  const regions: Record<string, Array<{ timezone: string; info: TimezoneInfo }>> = {
+    "North America": [],
+    "South America": [],
+    "Europe": [],
+    "Asia": [],
+    "Africa": [],
+    "Oceania": [],
+  }
+
+  Object.entries(TIMEZONES).forEach(([timezone, info]) => {
+    const entry = { timezone, info }
+    
+    if (timezone.startsWith("America/")) {
+      if (["US", "CA", "MX"].includes(info.country)) {
+        regions["North America"].push(entry)
+      } else {
+        regions["South America"].push(entry)
+      }
+    } else if (timezone.startsWith("Europe/")) {
+      regions["Europe"].push(entry)
+    } else if (timezone.startsWith("Asia/")) {
+      regions["Asia"].push(entry)
+    } else if (timezone.startsWith("Africa/")) {
+      regions["Africa"].push(entry)
+    } else if (timezone.startsWith("Australia/") || timezone.startsWith("Pacific/")) {
+      regions["Oceania"].push(entry)
+    }
+  })
+
+  // Sort cities within each region
+  Object.keys(regions).forEach(region => {
+    regions[region].sort((a, b) => a.info.city.localeCompare(b.info.city))
+  })
+
+  return regions
+}
+
+// Memoized version with cache for better performance
+const citiesByRegionCache = new Map<string, Record<string, Array<{ timezone: string; info: TimezoneInfo }>>>()
+
+export const getCitiesByRegionMemoized = (): Record<string, Array<{ timezone: string; info: TimezoneInfo }>> => {
+  const cacheKey = 'regions'
+  
+  if (citiesByRegionCache.has(cacheKey)) {
+    return citiesByRegionCache.get(cacheKey)!
+  }
+  
+  const result = getCitiesByRegion()
+  citiesByRegionCache.set(cacheKey, result)
+  return result
+}
+
+// Cache for timezone info to avoid recalculation
+const timezoneInfoCache = new Map<string, ExtendedTimezoneInfo>()
+
+export const getTimezoneInfoMemoized = (timezone: string, selectedDate: Date): ExtendedTimezoneInfo => {
+  const dateKey = selectedDate.toDateString()
+  const cacheKey = `${timezone}-${dateKey}`
+  
+  if (timezoneInfoCache.has(cacheKey)) {
+    return timezoneInfoCache.get(cacheKey)!
+  }
+  
+  const result = getTimezoneInfo(timezone, selectedDate)
+  timezoneInfoCache.set(cacheKey, result)
+  
+  // Clear old cache entries to prevent memory leaks (keep last 100 entries)
+  if (timezoneInfoCache.size > 100) {
+    const firstKey = timezoneInfoCache.keys().next().value
+    if (firstKey) {
+      timezoneInfoCache.delete(firstKey)
+    }
+  }
+  
+  return result
+}
+
+// Get all cities as a flat sorted list
+export const getAllCitiesSorted = (): Array<{ timezone: string; info: TimezoneInfo; regionLabel: string }> => {
+  const citiesByRegion = getCitiesByRegionMemoized()
+  const allCities: Array<{ timezone: string; info: TimezoneInfo; regionLabel: string }> = []
+
+  Object.entries(citiesByRegion).forEach(([region, cities]) => {
+    cities.forEach(city => {
+      allCities.push({
+        ...city,
+        regionLabel: region
+      })
+    })
+  })
+
+  return allCities
 }

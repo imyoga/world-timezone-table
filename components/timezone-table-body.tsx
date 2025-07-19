@@ -1,8 +1,4 @@
-import {
-	DEFAULT_COLUMNS,
-	getTimezoneInfo,
-	formatTime,
-} from '@/lib/timezone-utils'
+import { getTimezoneInfo, formatTime } from '@/lib/timezone-utils'
 import { useTimeFormat } from '@/components/theme-provider'
 import { Badge } from '@/components/ui/badge'
 import { TimeRow } from '@/hooks/use-time-rows'
@@ -13,6 +9,7 @@ interface TimezoneTableBodyProps {
 	selectedDate: Date
 	timeFormat: '12h' | '24h'
 	onRowClick: (rowIndex: number) => void
+	dynamicColumns: string[]
 }
 
 export function TimezoneTableBody({
@@ -21,8 +18,10 @@ export function TimezoneTableBody({
 	selectedDate,
 	timeFormat,
 	onRowClick,
+	dynamicColumns,
 }: TimezoneTableBodyProps) {
 	const { colorScheme } = useTimeFormat()
+	const otherColumns = dynamicColumns.filter((tz) => tz !== baseTimezone)
 
 	return (
 		<tbody>
@@ -31,33 +30,42 @@ export function TimezoneTableBody({
 					key={row.index}
 					className={`border-b transition-all duration-200 cursor-pointer group relative
 						${row.index % 2 === 0 ? 'bg-table-row-even' : 'bg-table-row-odd'}
-						${row.isCurrentTime 
-							? 'bg-table-current-time border-table-current-time-border border-l-4 shadow-md ring-1' 
-							: 'border-border'
+						${
+							row.isCurrentTime
+								? 'bg-table-current-time border-table-current-time-border border-l-4 shadow-md ring-1'
+								: 'border-border'
 						}
 						hover:bg-table-row-hover hover:shadow-sm
 						${row.isNextDay ? 'border-t-2 border-dashed border-muted-foreground' : ''}
 					`}
-					style={row.isCurrentTime ? {
-						borderLeftColor: colorScheme.primary,
-						'--tw-ring-color': colorScheme.primary + '33', // 33 is 20% opacity
-						'--current-time-color': colorScheme.primary
-					} as React.CSSProperties : {}}
+					style={
+						row.isCurrentTime
+							? ({
+									borderLeftColor: colorScheme.primary,
+									'--tw-ring-color': colorScheme.primary + '33', // 33 is 20% opacity
+									'--current-time-color': colorScheme.primary,
+							  } as React.CSSProperties)
+							: {}
+					}
 					onClick={() => onRowClick(row.index)}
 				>
-					<td className={`p-3 font-medium transition-colors duration-150 ${row.isCurrentTime ? 'font-semibold' : ''}`}>
+					<td
+						className={`p-3 font-medium transition-colors duration-150 ${
+							row.isCurrentTime ? 'font-semibold' : ''
+						}`}
+					>
 						<div className='flex items-center gap-2'>
 							{row.isCurrentTime && (
-								<div 
-									className="w-2 h-2 rounded-full animate-pulse shrink-0"
+								<div
+									className='w-2 h-2 rounded-full animate-pulse shrink-0'
 									style={{ backgroundColor: colorScheme.primary }}
 								></div>
 							)}
-							<span 
+							<span
 								className={row.isCurrentTime ? 'font-semibold' : ''}
-								style={{ 
+								style={{
 									color: row.isCurrentTime ? colorScheme.primary : 'inherit',
-									fontWeight: row.isCurrentTime ? '600' : 'inherit'
+									fontWeight: row.isCurrentTime ? '600' : 'inherit',
 								}}
 							>
 								{formatTime(row.times[baseTimezone], timeFormat)}
@@ -68,13 +76,13 @@ export function TimezoneTableBody({
 								</Badge>
 							)}
 							{row.isCurrentTime && (
-								<Badge 
-									variant='default' 
+								<Badge
+									variant='default'
 									className='text-xs border'
 									style={{
 										backgroundColor: colorScheme.accent,
 										color: colorScheme.primary,
-										borderColor: colorScheme.primary + '33'
+										borderColor: colorScheme.primary + '33',
 									}}
 								>
 									NOW
@@ -82,20 +90,20 @@ export function TimezoneTableBody({
 							)}
 						</div>
 					</td>
-					{DEFAULT_COLUMNS.filter((tz) => tz !== baseTimezone).map(
-						(timezone) => (
-							<td
-								key={timezone}
-								className={`p-3 text-center transition-colors duration-150 ${row.isCurrentTime ? 'font-semibold' : ''}`}
-								style={{ 
-									color: row.isCurrentTime ? colorScheme.primary : 'inherit',
-									fontWeight: row.isCurrentTime ? '600' : 'inherit'
-								}}
-							>
-								{formatTime(row.times[timezone], timeFormat)}
-							</td>
-						)
-					)}
+					{otherColumns.map((timezone) => (
+						<td
+							key={timezone}
+							className={`p-3 text-center transition-colors duration-150 ${
+								row.isCurrentTime ? 'font-semibold' : ''
+							}`}
+							style={{
+								color: row.isCurrentTime ? colorScheme.primary : 'inherit',
+								fontWeight: row.isCurrentTime ? '600' : 'inherit',
+							}}
+						>
+							{formatTime(row.times[timezone], timeFormat)}
+						</td>
+					))}
 				</tr>
 			))}
 		</tbody>

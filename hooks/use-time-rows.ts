@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { format } from "date-fns"
-import { DEFAULT_COLUMNS, getTimeForTimezone } from "@/lib/timezone-utils"
+import { getTimeForTimezone } from "@/lib/timezone-utils"
 
 export interface TimeRow {
   index: number
@@ -13,7 +13,8 @@ export const useTimeRows = (
   selectedDate: Date,
   currentRowIndex: number,
   getTimeForTimezone: (baseTime: Date, timezone: string, selectedDate: Date, baseTimezone?: string) => Date,
-  baseTimezone: string
+  baseTimezone: string,
+  dynamicColumns: string[] // Add dynamic columns parameter
 ): TimeRow[] => {
   return useMemo(() => {
     const rows: TimeRow[] = []
@@ -33,7 +34,7 @@ export const useTimeRows = (
       }
 
       // Calculate times for all timezones based on the base timezone time
-      DEFAULT_COLUMNS.forEach((timezone) => {
+      dynamicColumns.forEach((timezone) => {
         if (timezone === baseTimezone) {
           // For the base timezone, use the exact time we calculated
           row.times[timezone] = currentBaseTime
@@ -47,7 +48,7 @@ export const useTimeRows = (
     }
 
     return rows
-  }, [selectedDate, currentRowIndex, getTimeForTimezone, baseTimezone])
+  }, [selectedDate, currentRowIndex, getTimeForTimezone, baseTimezone, dynamicColumns])
 }
 
 export const useCurrentRowIndex = (currentTime: Date, baseTimezone: string): number => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Globe } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { TimezoneSelect } from '@/components/timezone-select'
@@ -10,10 +10,15 @@ import { CurrentTimeDisplay } from '@/components/current-time-display'
 import { TimezoneTableHeader } from '@/components/timezone-table-header'
 import { TimezoneTableBody } from '@/components/timezone-table-body'
 import { TimezoneModal } from '@/components/timezone-modal'
+import { SearchableCitySelector } from '@/components/searchable-city-selector'
 import { useTimeRows, useCurrentRowIndex } from '@/hooks/use-time-rows'
 import { useClientTime } from '@/hooks/use-client-time'
 import { useTimeFormat } from '@/components/theme-provider'
-import { getTimezoneInfo, getTimeForTimezone } from '@/lib/timezone-utils'
+import {
+	getTimezoneInfo,
+	getTimeForTimezone,
+	DEFAULT_COLUMNS,
+} from '@/lib/timezone-utils'
 
 export default function WorldTimezoneTable() {
 	const [baseTimezone, setBaseTimezone] = useState('America/New_York')
@@ -21,6 +26,8 @@ export default function WorldTimezoneTable() {
 	const [selectedRow, setSelectedRow] = useState<number | null>(null)
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 	const [calendarOpen, setCalendarOpen] = useState(false)
+	const [dynamicColumns, setDynamicColumns] =
+		useState<string[]>(DEFAULT_COLUMNS)
 
 	const { isClient, currentTime } = useClientTime()
 
@@ -29,7 +36,8 @@ export default function WorldTimezoneTable() {
 		selectedDate,
 		currentRowIndex,
 		getTimeForTimezone,
-		baseTimezone
+		baseTimezone,
+		dynamicColumns
 	)
 	const baseTimezoneInfo = getTimezoneInfo(baseTimezone, selectedDate)
 
@@ -52,6 +60,39 @@ export default function WorldTimezoneTable() {
 	const handleTimeFormatToggle = () => {
 		setTimeFormat(timeFormat === '12h' ? '24h' : '12h')
 	}
+
+	const handleBaseTimezoneChange = useCallback(
+		(timezone: string) => {
+			setBaseTimezone(timezone)
+			// Ensure the new base timezone is in the dynamic columns
+			if (!dynamicColumns.includes(timezone)) {
+				setDynamicColumns((prev) => [
+					timezone,
+					...prev.filter((tz) => tz !== timezone),
+				])
+			}
+		},
+		[dynamicColumns]
+	)
+
+	const handleCityAdd = useCallback(
+		(timezone: string) => {
+			if (!dynamicColumns.includes(timezone)) {
+				setDynamicColumns((prev) => [...prev, timezone])
+			}
+		},
+		[dynamicColumns]
+	)
+
+	const handleRemoveColumn = useCallback(
+		(timezone: string) => {
+			// Don't allow removing the base timezone
+			if (timezone === baseTimezone) return
+
+			setDynamicColumns((prev) => prev.filter((tz) => tz !== timezone))
+		},
+		[baseTimezone]
+	)
 
 	return (
 		<div className='min-h-screen bg-background p-4'>
@@ -84,7 +125,7 @@ export default function WorldTimezoneTable() {
 						<TimezoneSelect
 							baseTimezone={baseTimezone}
 							selectedDate={selectedDate}
-							onBaseTimezoneChange={setBaseTimezone}
+							onBaseTimezoneChange={handleBaseTimezoneChange}
 						/>
 
 						<DatePicker
@@ -97,6 +138,12 @@ export default function WorldTimezoneTable() {
 						<TimeFormatSelect
 							timeFormat={timeFormat}
 							onTimeFormatChange={setTimeFormat}
+						/>
+
+						<SearchableCitySelector
+							selectedDate={selectedDate}
+							onCityAdd={handleCityAdd}
+							addedCities={dynamicColumns}
 						/>
 					</div>
 				</div>
@@ -113,6 +160,8 @@ export default function WorldTimezoneTable() {
 									currentTime={currentTime}
 									timeFormat={timeFormat}
 									isClient={isClient}
+									dynamicColumns={dynamicColumns}
+									onRemoveColumn={handleRemoveColumn}
 								/>
 								<TimezoneTableBody
 									timeRows={timeRows}
@@ -120,6 +169,7 @@ export default function WorldTimezoneTable() {
 									selectedDate={selectedDate}
 									timeFormat={timeFormat}
 									onRowClick={handleRowClick}
+									dynamicColumns={dynamicColumns}
 								/>
 							</table>
 						</div>
@@ -134,6 +184,7 @@ export default function WorldTimezoneTable() {
 					timeRows={timeRows}
 					selectedDate={selectedDate}
 					timeFormat={timeFormat}
+					dynamicColumns={dynamicColumns}
 				/>
 			</div>
 		</div>

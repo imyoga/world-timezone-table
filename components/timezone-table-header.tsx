@@ -1,5 +1,4 @@
 import {
-	DEFAULT_COLUMNS,
 	getTimezoneInfo,
 	ExtendedTimezoneInfo,
 	formatTime,
@@ -7,6 +6,8 @@ import {
 	getFormattedCityName,
 } from '@/lib/timezone-utils'
 import { useTimeFormat } from '@/components/theme-provider'
+import { X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface TimezoneTableHeaderProps {
 	baseTimezone: string
@@ -15,6 +16,8 @@ interface TimezoneTableHeaderProps {
 	currentTime?: Date
 	timeFormat?: '12h' | '24h'
 	isClient?: boolean
+	dynamicColumns: string[]
+	onRemoveColumn?: (timezone: string) => void
 }
 
 export function TimezoneTableHeader({
@@ -24,8 +27,12 @@ export function TimezoneTableHeader({
 	currentTime = new Date(),
 	timeFormat = '12h',
 	isClient = true,
+	dynamicColumns,
+	onRemoveColumn,
 }: TimezoneTableHeaderProps) {
 	const { colorScheme } = useTimeFormat()
+
+	const otherColumns = dynamicColumns.filter((tz) => tz !== baseTimezone)
 
 	return (
 		<thead>
@@ -33,23 +40,33 @@ export function TimezoneTableHeader({
 			<tr className='border-b border-border bg-table-header'>
 				<th className='p-3 text-left font-semibold min-w-32'>
 					<div className='flex flex-col items-start gap-1'>
-						<span>
-							{getFormattedCityName(baseTimezone)}
-						</span>
+						<span>{getFormattedCityName(baseTimezone)}</span>
 						<span className='text-xs text-muted-foreground'>
 							{`${baseTimezoneInfo.currentName} (${baseTimezoneInfo.utcOffset})`}
 						</span>
 					</div>
 				</th>
-				{DEFAULT_COLUMNS.filter((tz) => tz !== baseTimezone).map((timezone) => {
+				{otherColumns.map((timezone) => {
 					const tzInfo = getTimezoneInfo(timezone, selectedDate)
 					return (
 						<th
 							key={timezone}
-							className='p-3 text-center font-semibold min-w-28'
+							className='p-3 text-center font-semibold min-w-28 relative group'
 						>
 							<div className='flex flex-col items-center gap-1'>
-								<span>{getFormattedCityName(timezone)}</span>
+								<div className='flex items-center gap-1'>
+									<span>{getFormattedCityName(timezone)}</span>
+									{onRemoveColumn && (
+										<Button
+											size='sm'
+											variant='ghost'
+											className='h-4 w-4 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive hover:text-destructive-foreground'
+											onClick={() => onRemoveColumn(timezone)}
+										>
+											<X className='h-3 w-3' />
+										</Button>
+									)}
+								</div>
 								<span className='text-xs text-muted-foreground'>
 									{`${tzInfo.currentName} (${tzInfo.utcOffset})`}
 								</span>
@@ -58,33 +75,43 @@ export function TimezoneTableHeader({
 					)
 				})}
 			</tr>
-			
+
 			{/* Current time row */}
 			<tr className='border-b border-border bg-muted'>
 				<th className='p-2 text-left font-medium text-sm'>
 					<div className='flex flex-col items-start gap-1'>
-						<span 
+						<span
 							className='font-semibold'
 							style={{ color: colorScheme.primary }}
 						>
-							{isClient ? formatTime(getTimeForTimezone(currentTime, baseTimezone, new Date()), timeFormat, true) : '--:--:--'}
+							{isClient
+								? formatTime(
+										getTimeForTimezone(currentTime, baseTimezone, new Date()),
+										timeFormat,
+										true
+								  )
+								: '--:--:--'}
 						</span>
-						<span className='text-xs text-muted-foreground'>
-							Current Time
-						</span>
+						<span className='text-xs text-muted-foreground'>Current Time</span>
 					</div>
 				</th>
-				{DEFAULT_COLUMNS.filter((tz) => tz !== baseTimezone).map((timezone) => (
+				{otherColumns.map((timezone) => (
 					<th
 						key={`current-${timezone}`}
 						className='p-2 text-center font-medium text-sm'
 					>
 						<div className='flex flex-col items-center gap-1'>
-							<span 
+							<span
 								className='font-semibold'
 								style={{ color: colorScheme.primary }}
 							>
-								{isClient ? formatTime(getTimeForTimezone(currentTime, timezone, new Date()), timeFormat, true) : '--:--:--'}
+								{isClient
+									? formatTime(
+											getTimeForTimezone(currentTime, timezone, new Date()),
+											timeFormat,
+											true
+									  )
+									: '--:--:--'}
 							</span>
 							<span className='text-xs text-muted-foreground'>
 								Current Time
