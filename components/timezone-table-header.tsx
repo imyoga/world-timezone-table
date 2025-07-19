@@ -4,7 +4,9 @@ import {
 	ExtendedTimezoneInfo,
 	formatTime,
 	getTimeForTimezone,
+	getFormattedCityName,
 } from '@/lib/timezone-utils'
+import { useTimeFormat } from '@/components/theme-provider'
 
 interface TimezoneTableHeaderProps {
 	baseTimezone: string
@@ -23,6 +25,8 @@ export function TimezoneTableHeader({
 	timeFormat = '12h',
 	isClient = true,
 }: TimezoneTableHeaderProps) {
+	const { colorScheme } = useTimeFormat()
+
 	return (
 		<thead>
 			{/* Main header row with timezone info */}
@@ -30,7 +34,7 @@ export function TimezoneTableHeader({
 				<th className='p-3 text-left font-semibold min-w-32'>
 					<div className='flex flex-col items-start gap-1'>
 						<span>
-							{baseTimezoneInfo.country}
+							{getFormattedCityName(baseTimezone)}
 						</span>
 						<span className='text-xs text-muted-foreground'>
 							{`${baseTimezoneInfo.currentName} (${baseTimezoneInfo.utcOffset})`}
@@ -45,7 +49,7 @@ export function TimezoneTableHeader({
 							className='p-3 text-center font-semibold min-w-28'
 						>
 							<div className='flex flex-col items-center gap-1'>
-								<span>{`${tzInfo.city} (${tzInfo.country})`}</span>
+								<span>{getFormattedCityName(timezone)}</span>
 								<span className='text-xs text-muted-foreground'>
 									{`${tzInfo.currentName} (${tzInfo.utcOffset})`}
 								</span>
@@ -59,7 +63,10 @@ export function TimezoneTableHeader({
 			<tr className='border-b border-border bg-muted'>
 				<th className='p-2 text-left font-medium text-sm'>
 					<div className='flex flex-col items-start gap-1'>
-						<span className='text-primary font-semibold'>
+						<span 
+							className='font-semibold'
+							style={{ color: colorScheme.primary }}
+						>
 							{isClient ? formatTime(getTimeForTimezone(currentTime, baseTimezone, new Date()), timeFormat, true) : '--:--:--'}
 						</span>
 						<span className='text-xs text-muted-foreground'>
@@ -73,7 +80,10 @@ export function TimezoneTableHeader({
 						className='p-2 text-center font-medium text-sm'
 					>
 						<div className='flex flex-col items-center gap-1'>
-							<span className='text-primary font-semibold'>
+							<span 
+								className='font-semibold'
+								style={{ color: colorScheme.primary }}
+							>
 								{isClient ? formatTime(getTimeForTimezone(currentTime, timezone, new Date()), timeFormat, true) : '--:--:--'}
 							</span>
 							<span className='text-xs text-muted-foreground'>

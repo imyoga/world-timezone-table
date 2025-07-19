@@ -1,6 +1,7 @@
 'use client'
 
 import { Calendar } from 'lucide-react'
+import { useTimeFormat } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
 import {
 	Popover,
@@ -24,6 +25,13 @@ export function DatePicker({
 	onDateSelect,
 	onCalendarOpenChange,
 }: DatePickerProps) {
+	const { colorScheme } = useTimeFormat()
+	
+	// Calculate a reasonable range for years (10 years before to 10 years after current year)
+	const currentYear = new Date().getFullYear()
+	const fromYear = currentYear - 10
+	const toYear = currentYear + 10
+
 	return (
 		<div className='flex items-center gap-2'>
 			<span className='text-sm font-medium'>Date:</span>
@@ -35,8 +43,15 @@ export function DatePicker({
 							'w-48 justify-start text-left font-normal bg-white',
 							!selectedDate && 'text-muted-foreground'
 						)}
+						style={{
+							borderColor: colorScheme.primary + '40',
+							'--tw-ring-color': colorScheme.primary
+						} as React.CSSProperties}
 					>
-						<Calendar className='mr-2 h-4 w-4' />
+						<Calendar 
+							className='mr-2 h-4 w-4' 
+							style={{ color: colorScheme.primary }}
+						/>
 						{format(selectedDate, 'PPP')}
 					</Button>
 				</PopoverTrigger>
@@ -50,6 +65,8 @@ export function DatePicker({
 								onCalendarOpenChange(false)
 							}
 						}}
+						fromYear={fromYear}
+						toYear={toYear}
 						initialFocus
 					/>
 				</PopoverContent>

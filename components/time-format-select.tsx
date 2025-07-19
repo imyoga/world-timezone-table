@@ -1,3 +1,4 @@
+import { useTimeFormat } from '@/components/theme-provider'
 import {
 	Select,
 	SelectContent,
@@ -15,13 +16,21 @@ export function TimeFormatSelect({
 	timeFormat,
 	onTimeFormatChange,
 }: TimeFormatSelectProps) {
+	const { colorScheme } = useTimeFormat()
+
 	return (
 		<div className='flex items-center gap-3'>
 			<div className='flex items-center gap-2 text-sm font-medium text-muted-foreground'>
 				<span>Format:</span>
 			</div>
 			<Select value={timeFormat} onValueChange={onTimeFormatChange}>
-				<SelectTrigger className='w-20 bg-card hover:bg-hover border-border transition-colors'>
+				<SelectTrigger 
+					className='w-20 bg-card hover:bg-hover border-border transition-colors'
+					style={{ 
+						borderColor: colorScheme.primary + '40', // 40 is ~25% opacity
+						'--tw-ring-color': colorScheme.primary 
+					} as React.CSSProperties}
+				>
 					<SelectValue />
 				</SelectTrigger>
 				<SelectContent>

@@ -12,6 +12,28 @@ export interface ExtendedTimezoneInfo extends TimezoneInfo {
   isDST: boolean
 }
 
+// Country code to flag emoji mapping using Unicode codepoints
+export const COUNTRY_FLAGS: Record<string, string> = {
+  "US": "\uD83C\uDDFA\uD83C\uDDF8", // 🇺🇸
+  "CA": "\uD83C\uDDE8\uD83C\uDDE6", // 🇨🇦
+  "GB": "\uD83C\uDDEC\uD83C\uDDE7", // 🇬🇧
+  "AE": "\uD83C\uDDE6\uD83C\uDDEA", // 🇦🇪
+  "IN": "\uD83C\uDDEE\uD83C\uDDF3", // 🇮🇳
+  "JP": "\uD83C\uDDEF\uD83C\uDDF5", // 🇯🇵
+  "AU": "\uD83C\uDDE6\uD83C\uDDFA", // 🇦🇺
+}
+
+// Fallback country name mapping if flags don't render
+export const COUNTRY_NAMES: Record<string, string> = {
+  "US": "USA",
+  "CA": "Canada", 
+  "GB": "UK",
+  "AE": "UAE",
+  "IN": "India",
+  "JP": "Japan",
+  "AU": "Australia",
+}
+
 // Minimal hardcoded data - only what we can't derive automatically
 export const TIMEZONES: Record<string, TimezoneInfo> = {
   "America/New_York": {
@@ -59,7 +81,7 @@ export const TIMEZONES: Record<string, TimezoneInfo> = {
   "Asia/Kolkata": {
     name: "India",
     country: "IN",
-    city: "Mumbai",
+    city: "Kolkata",
     timezone: "Asia/Kolkata",
   },
   "Asia/Tokyo": {
@@ -225,6 +247,44 @@ export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedT
     utcOffset: formatUTCOffset(offset),
     isDST,
   }
+}
+
+// Get formatted city name with country (using country names for better compatibility)
+export const getFormattedCityName = (timezone: string): string => {
+  const info = TIMEZONES[timezone]
+  if (!info) return timezone
+  
+  const countryName = COUNTRY_NAMES[info.country] || info.country
+  return `${info.city} (${countryName})`
+}
+
+// Version with flag emojis (use this if flags render properly)
+export const getFormattedCityNameWithFlags = (timezone: string): string => {
+  const info = TIMEZONES[timezone]
+  if (!info) return timezone
+  
+  const flagEmoji = COUNTRY_FLAGS[info.country]
+  const countryName = COUNTRY_NAMES[info.country] || info.country
+  
+  // Try flag emoji first, fallback to country name if not available
+  const countryDisplay = flagEmoji || countryName
+  return `${info.city} (${countryDisplay})`
+}
+
+// Alternative version that uses country names instead of flags
+export const getFormattedCityNameWithCountry = (timezone: string): string => {
+  const info = TIMEZONES[timezone]
+  if (!info) return timezone
+  
+  const countryName = COUNTRY_NAMES[info.country] || info.country
+  return `${info.city}, ${countryName}`
+}
+
+// Get formatted location display with timezone abbreviation
+export const getFormattedLocationDisplay = (timezone: string, selectedDate: Date): string => {
+  const tzInfo = getTimezoneInfo(timezone, selectedDate)
+  const cityWithFlag = getFormattedCityName(timezone)
+  return `${cityWithFlag}`
 }
 
 

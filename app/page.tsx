@@ -12,11 +12,12 @@ import { TimezoneTableBody } from '@/components/timezone-table-body'
 import { TimezoneModal } from '@/components/timezone-modal'
 import { useTimeRows, useCurrentRowIndex } from '@/hooks/use-time-rows'
 import { useClientTime } from '@/hooks/use-client-time'
+import { useTimeFormat } from '@/components/theme-provider'
 import { getTimezoneInfo, getTimeForTimezone } from '@/lib/timezone-utils'
 
 export default function WorldTimezoneTable() {
 	const [baseTimezone, setBaseTimezone] = useState('America/New_York')
-	const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('12h')
+	const { timeFormat, setTimeFormat, colorScheme } = useTimeFormat()
 	const [selectedRow, setSelectedRow] = useState<number | null>(null)
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 	const [calendarOpen, setCalendarOpen] = useState(false)
@@ -58,7 +59,10 @@ export default function WorldTimezoneTable() {
 				<div className='mb-8'>
 					<div className='flex items-center justify-between mb-6'>
 						<div className='flex items-center gap-3'>
-							<Globe className='h-8 w-8 text-primary' />
+							<Globe 
+								className='h-8 w-8 transition-colors' 
+								style={{ color: colorScheme.primary }}
+							/>
 							<h1 className='text-3xl font-bold text-foreground'>
 								World Timezone Table
 							</h1>
