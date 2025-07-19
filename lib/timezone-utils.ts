@@ -271,8 +271,14 @@ export const formatTime = (date: Date, format: "12h" | "24h", includeSeconds: bo
   })
 }
 
-export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDate: Date): Date => {
+export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDate: Date, baseTimezone?: string): Date => {
   try {
+    // If we have a base timezone, we need to convert from base timezone to target timezone
+    if (baseTimezone && baseTimezone !== timezone) {
+      return convertTimeBetweenTimezones(baseTime, baseTimezone, timezone, selectedDate)
+    }
+    
+    // Original logic for when no base timezone is specified
     // Create a date with the same date as selectedDate but time from baseTime
     const selectedDateTime = new Date(selectedDate)
     selectedDateTime.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
@@ -327,6 +333,88 @@ export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDat
     // Return a valid fallback date
     const fallback = new Date(selectedDate)
     fallback.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
+    return fallback
+  }
+}
+
+// New function to convert time between specific timezones
+export const convertTimeBetweenTimezones = (localTime: Date, fromTimezone: string, toTimezone: string, selectedDate: Date): Date => {
+  try {
+    // Create a date object representing the time in the source timezone on the selected date
+    const sourceDateTime = new Date(selectedDate)
+    sourceDateTime.setHours(localTime.getHours(), localTime.getMinutes(), localTime.getSeconds(), 0)
+    
+    // Convert to a string in the source timezone, then parse it as UTC to get the "wall clock" time
+    const sourceTimeString = sourceDateTime.toLocaleString('sv-SE', { timeZone: fromTimezone })
+    const sourceAsUTC = new Date(sourceTimeString + 'Z')
+    
+    // Get the offset difference between source and target timezones
+    const sourceOffset = getTimezoneOffset(sourceDateTime, fromTimezone)
+    const targetOffset = getTimezoneOffset(sourceDateTime, toTimezone)
+    const offsetDifferenceMs = (targetOffset - sourceOffset) * 60 * 60 * 1000
+    
+    // Apply the offset difference
+    const targetTime = new Date(sourceAsUTC.getTime() + offsetDifferenceMs)
+    
+    if (!isNaN(targetTime.getTime())) {
+      return targetTime
+    }
+    
+    // Fallback method using Intl.DateTimeFormat
+    const baseTimeString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}T${String(localTime.getHours()).padStart(2, '0')}:${String(localTime.getMinutes()).padStart(2, '0')}:${String(localTime.getSeconds()).padStart(2, '0')}`
+    
+    // Create a date assuming it's in the source timezone
+    const baseDate = new Date(baseTimeString)
+    
+    // Get what this time would be in UTC if it were in the source timezone
+    const sourceFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: fromTimezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
+    
+    // Find the UTC time that, when converted to the source timezone, gives us our desired time
+    let testDate = new Date(baseDate.getTime() - (sourceOffset * 60 * 60 * 1000))
+    
+    // Convert this UTC time to the target timezone
+    const targetFormatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: toTimezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
+    
+    const targetParts = targetFormatter.formatToParts(testDate)
+    const targetFormatParts: Record<string, string> = {}
+    targetParts.forEach(part => {
+      targetFormatParts[part.type] = part.value
+    })
+    
+    const finalTargetTime = new Date(
+      parseInt(targetFormatParts.year),
+      parseInt(targetFormatParts.month) - 1,
+      parseInt(targetFormatParts.day),
+      parseInt(targetFormatParts.hour),
+      parseInt(targetFormatParts.minute),
+      parseInt(targetFormatParts.second)
+    )
+    
+    return finalTargetTime
+    
+  } catch (error) {
+    console.warn(`Error converting time from ${fromTimezone} to ${toTimezone}:`, error)
+    // Return fallback
+    const fallback = new Date(selectedDate)
+    fallback.setHours(localTime.getHours(), localTime.getMinutes(), localTime.getSeconds(), 0)
     return fallback
   }
 }

@@ -12,14 +12,18 @@ export interface TimeRow {
 export const useTimeRows = (
   selectedDate: Date,
   currentRowIndex: number,
-  getTimeForTimezone: (baseTime: Date, timezone: string, selectedDate: Date) => Date
+  getTimeForTimezone: (baseTime: Date, timezone: string, selectedDate: Date, baseTimezone?: string) => Date,
+  baseTimezone: string
 ): TimeRow[] => {
   return useMemo(() => {
     const rows: TimeRow[] = []
+    
+    // Create a base date at midnight in the base timezone
     const baseDate = new Date(selectedDate)
     baseDate.setHours(0, 0, 0, 0)
 
     for (let i = 0; i <= 48; i++) {
+      // Always start from midnight (00:00) and increment by 30 minutes
       const currentBaseTime = new Date(baseDate.getTime() + i * 30 * 60 * 1000)
       const row: TimeRow = {
         index: i,
@@ -28,15 +32,22 @@ export const useTimeRows = (
         isNextDay: i === 48,
       }
 
+      // Calculate times for all timezones based on the base timezone time
       DEFAULT_COLUMNS.forEach((timezone) => {
-        row.times[timezone] = getTimeForTimezone(currentBaseTime, timezone, selectedDate)
+        if (timezone === baseTimezone) {
+          // For the base timezone, use the exact time we calculated
+          row.times[timezone] = currentBaseTime
+        } else {
+          // For other timezones, calculate the equivalent time
+          row.times[timezone] = getTimeForTimezone(currentBaseTime, timezone, selectedDate, baseTimezone)
+        }
       })
 
       rows.push(row)
     }
 
     return rows
-  }, [selectedDate, currentRowIndex, getTimeForTimezone])
+  }, [selectedDate, currentRowIndex, getTimeForTimezone, baseTimezone])
 }
 
 export const useCurrentRowIndex = (currentTime: Date, baseTimezone: string): number => {

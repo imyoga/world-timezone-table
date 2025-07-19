@@ -28,7 +28,8 @@ export default function WorldTimezoneTable() {
 	const timeRows = useTimeRows(
 		selectedDate,
 		currentRowIndex,
-		getTimeForTimezone
+		getTimeForTimezone,
+		baseTimezone
 	)
 	const baseTimezoneInfo = getTimezoneInfo(baseTimezone, selectedDate)
 
@@ -59,8 +60,8 @@ export default function WorldTimezoneTable() {
 				<div className='mb-8'>
 					<div className='flex items-center justify-between mb-6'>
 						<div className='flex items-center gap-3'>
-							<Globe 
-								className='h-8 w-8 transition-colors' 
+							<Globe
+								className='h-8 w-8 transition-colors'
 								style={{ color: colorScheme.primary }}
 							/>
 							<h1 className='text-3xl font-bold text-foreground'>
