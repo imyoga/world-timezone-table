@@ -1,30 +1,92 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { DayPicker, type DayPickerProps } from 'react-day-picker'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
+import { DayPicker, type DayPickerProps, useDayPicker } from 'react-day-picker'
 
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
-// Custom header component with themed dropdowns
+// Custom dropdown component
+interface CustomDropdownProps {
+	value: string
+	options: { value: string; label: string }[]
+	onSelect: (value: string) => void
+	className?: string
+	placeholder?: string
+}
+
+function CustomDropdown({ value, options, onSelect, className, placeholder }: CustomDropdownProps) {
+	const [isOpen, setIsOpen] = React.useState(false)
+	const dropdownRef = React.useRef<HTMLDivElement>(null)
+
+	// Close dropdown when clicking outside
+	React.useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+				setIsOpen(false)
+			}
+		}
+
+		if (isOpen) {
+			document.addEventListener('mousedown', handleClickOutside)
+			return () => document.removeEventListener('mousedown', handleClickOutside)
+		}
+	}, [isOpen])
+
+	const selectedOption = options.find(opt => opt.value === value)
+
+	return (
+		<div ref={dropdownRef} className={cn("relative", className)}>
+			<button
+				type="button"
+				onClick={() => setIsOpen(!isOpen)}
+				className={cn(
+					"flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+					className
+				)}
+			>
+				<span>{selectedOption?.label || placeholder}</span>
+				<ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+			</button>
+			
+			{isOpen && (
+				<div className="absolute top-full mt-1 z-[9999] w-full max-h-[200px] overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md">
+					{options.map((option) => (
+						<button
+							key={option.value}
+							type="button"
+							onClick={() => {
+								onSelect(option.value)
+								setIsOpen(false)
+							}}
+							className={cn(
+								"relative flex w-full cursor-pointer select-none items-center rounded-sm px-3 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground transition-colors",
+								value === option.value && "bg-accent text-accent-foreground"
+							)}
+						>
+							{option.label}
+						</button>
+					))}
+				</div>
+			)}
+		</div>
+	)
+}
+
+// Custom header component with custom dropdowns
 function CustomHeader({
 	displayMonth,
-	goToMonth,
-	previousMonth,
-	nextMonth,
 	fromYear = new Date().getFullYear() - 10,
 	toYear = new Date().getFullYear() + 10,
-}: any) {
+}: {
+	displayMonth: Date
+	fromYear?: number
+	toYear?: number
+}) {
+	const { goToMonth, previousMonth, nextMonth } = useDayPicker()
 	const currentMonth = displayMonth.getMonth()
 	const currentYear = displayMonth.getFullYear()
 
@@ -38,21 +100,43 @@ function CustomHeader({
 		(_, i) => fromYear + i
 	)
 
-	const handleMonthChange = (monthIndex: number) => {
-		const newDate = new Date(currentYear, monthIndex, 1)
+	const monthOptions = months.map((month, index) => ({
+		value: index.toString(),
+		label: month
+	}))
+
+	const yearOptions = years.map(year => ({
+		value: year.toString(),
+		label: year.toString()
+	}))
+
+	const handleMonthChange = (monthIndex: string) => {
+		const newDate = new Date(currentYear, parseInt(monthIndex), 1)
 		goToMonth(newDate)
 	}
 
-	const handleYearChange = (year: number) => {
-		const newDate = new Date(year, currentMonth, 1)
+	const handleYearChange = (year: string) => {
+		const newDate = new Date(parseInt(year), currentMonth, 1)
 		goToMonth(newDate)
+	}
+
+	const goToPreviousMonth = () => {
+		if (previousMonth) {
+			goToMonth(previousMonth)
+		}
+	}
+
+	const goToNextMonth = () => {
+		if (nextMonth) {
+			goToMonth(nextMonth)
+		}
 	}
 
 	return (
 		<div className="flex justify-center items-center gap-2 pb-4">
 			<button
 				type="button"
-				onClick={() => previousMonth && goToMonth(previousMonth)}
+				onClick={goToPreviousMonth}
 				disabled={!previousMonth}
 				className={cn(
 					buttonVariants({ variant: 'outline' }),
@@ -62,41 +146,23 @@ function CustomHeader({
 				<ChevronLeft className="h-4 w-4" />
 			</button>
 
-			<Select 
-				value={currentMonth.toString()} 
-				onValueChange={(value) => handleMonthChange(parseInt(value))}
-			>
-				<SelectTrigger className="w-[130px] h-8">
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
-					{months.map((month, index) => (
-						<SelectItem key={month} value={index.toString()}>
-							{month}
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
+			<CustomDropdown
+				value={currentMonth.toString()}
+				options={monthOptions}
+				onSelect={handleMonthChange}
+				className="w-[130px]"
+			/>
 
-			<Select 
-				value={currentYear.toString()} 
-				onValueChange={(value) => handleYearChange(parseInt(value))}
-			>
-				<SelectTrigger className="w-[100px] h-8">
-					<SelectValue />
-				</SelectTrigger>
-				<SelectContent>
-					{years.map((year) => (
-						<SelectItem key={year} value={year.toString()}>
-							{year}
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
+			<CustomDropdown
+				value={currentYear.toString()}
+				options={yearOptions}
+				onSelect={handleYearChange}
+				className="w-[100px]"
+			/>
 
 			<button
 				type="button"
-				onClick={() => nextMonth && goToMonth(nextMonth)}
+				onClick={goToNextMonth}
 				disabled={!nextMonth}
 				className={cn(
 					buttonVariants({ variant: 'outline' }),
@@ -150,9 +216,9 @@ function Calendar({
 				...classNames,
 			}}
 			components={{
-				Caption: (captionProps) => (
+				Caption: ({ displayMonth }) => (
 					<CustomHeader 
-						{...captionProps} 
+						displayMonth={displayMonth}
 						fromYear={fromYear} 
 						toYear={toYear} 
 					/>

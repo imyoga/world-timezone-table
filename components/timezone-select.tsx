@@ -33,7 +33,7 @@ export function TimezoneSelect({
 			</div>
 			<Select value={baseTimezone} onValueChange={onBaseTimezoneChange}>
 				<SelectTrigger 
-					className='w-48 bg-card hover:bg-hover border-border transition-colors'
+					className='w-48 bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
 					style={{ 
 						borderColor: colorScheme.primary + '40',
 						'--tw-ring-color': colorScheme.primary 

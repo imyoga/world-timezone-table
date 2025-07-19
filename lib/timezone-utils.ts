@@ -101,6 +101,7 @@ export const TIMEZONES: Record<string, TimezoneInfo> = {
 export const DEFAULT_COLUMNS = [
   "America/New_York",
   "America/Chicago",
+  "America/Denver",
   "America/Los_Angeles",
   "Europe/London",
   "Asia/Dubai",
@@ -126,19 +127,10 @@ export const getTimezoneOffset = (date: Date, timezone: string): number => {
   return (local.getTime() - utc.getTime()) / (1000 * 60 * 60)
 }
 
-// Common timezone abbreviation mapping for consistent display
-const TIMEZONE_ABBREVIATIONS: Record<string, { standard: string, daylight: string }> = {
-  "Europe/London": { standard: "GMT", daylight: "BST" },
-  "Asia/Dubai": { standard: "GST", daylight: "GST" },
-  "Asia/Kolkata": { standard: "IST", daylight: "IST" },
-  "Asia/Tokyo": { standard: "JST", daylight: "JST" },
-  "Australia/Sydney": { standard: "AEST", daylight: "AEDT" },
-}
-
-// Get timezone abbreviation dynamically using Intl API with fallback to custom mapping
+// Get timezone abbreviation dynamically using multiple Intl API strategies
 export const getTimezoneAbbreviation = (date: Date, timezone: string): string => {
   try {
-    // First try the Intl API
+    // Strategy 1: Try getting the abbreviation using formatToParts
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: timezone,
       timeZoneName: 'short'
@@ -146,29 +138,74 @@ export const getTimezoneAbbreviation = (date: Date, timezone: string): string =>
     
     const parts = formatter.formatToParts(date)
     const timeZoneName = parts.find(part => part.type === 'timeZoneName')
-    const abbreviation = timeZoneName?.value
+    let abbreviation = timeZoneName?.value
     
-    // If we get a proper abbreviation (not GMT+X format), use it
+    // Strategy 2: If we get a generic abbreviation like "MT", try a different approach
+    if (abbreviation && (abbreviation === 'MT' || abbreviation === 'CT' || abbreviation === 'ET' || abbreviation === 'PT')) {
+      // Create two dates - one in January (standard time) and one in July (likely daylight time)
+      const january = new Date(date.getFullYear(), 0, 15) // Mid January
+      const july = new Date(date.getFullYear(), 6, 15) // Mid July
+      
+      // Get abbreviations for both dates
+      const janFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        timeZoneName: 'short'
+      })
+      const julFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: timezone,
+        timeZoneName: 'short'
+      })
+      
+      const janParts = janFormatter.formatToParts(january)
+      const julParts = julFormatter.formatToParts(july)
+      
+      const janAbbr = janParts.find(part => part.type === 'timeZoneName')?.value
+      const julAbbr = julParts.find(part => part.type === 'timeZoneName')?.value
+      
+      // If we get different abbreviations, use the appropriate one
+      if (janAbbr && julAbbr && janAbbr !== julAbbr) {
+        // Check if current date is in DST
+        const isDST = isDSTActive(date, timezone)
+        
+        // For most US timezones, July is DST and January is standard
+        const isDSTUsuallyActive = isDSTActive(july, timezone)
+        const isStandardTime = !isDSTActive(january, timezone)
+        
+        if (isDSTUsuallyActive && isStandardTime) {
+          abbreviation = isDST ? julAbbr : janAbbr
+        }
+      }
+    }
+    
+    // Strategy 3: For some edge cases, manually construct from timezone if still generic
+    if (abbreviation && (abbreviation === 'MT' || abbreviation === 'CT' || abbreviation === 'ET' || abbreviation === 'PT')) {
+      const isDST = isDSTActive(date, timezone)
+      
+      // Map generic abbreviations to proper ones based on timezone
+      const timezoneMap: Record<string, { standard: string, daylight: string }> = {
+        'America/Denver': { standard: 'MST', daylight: 'MDT' },
+        'America/Edmonton': { standard: 'MST', daylight: 'MDT' },
+        'America/Chicago': { standard: 'CST', daylight: 'CDT' },
+        'America/New_York': { standard: 'EST', daylight: 'EDT' },
+        'America/Los_Angeles': { standard: 'PST', daylight: 'PDT' },
+      }
+      
+      const mapping = timezoneMap[timezone]
+      if (mapping) {
+        abbreviation = isDST ? mapping.daylight : mapping.standard
+      }
+    }
+    
+    // Return the best abbreviation we found, excluding GMT+X formats
     if (abbreviation && !abbreviation.startsWith('GMT') && !abbreviation.startsWith('UTC')) {
       return abbreviation
     }
     
-    // Otherwise, use our custom mapping
-    const customMapping = TIMEZONE_ABBREVIATIONS[timezone]
-    if (customMapping) {
-      const isDST = isDSTActive(date, timezone)
-      return isDST ? customMapping.daylight : customMapping.standard
-    }
-    
-    // Fallback to the Intl result or timezone name
-    return abbreviation || timezone.split('/').pop() || timezone
-  } catch (error) {
     // Final fallback
-    const customMapping = TIMEZONE_ABBREVIATIONS[timezone]
-    if (customMapping) {
-      const isDST = isDSTActive(date, timezone)
-      return isDST ? customMapping.daylight : customMapping.standard
-    }
+    return abbreviation || timezone.split('/').pop() || timezone
+    
+  } catch (error) {
+    console.warn(`Error getting timezone abbreviation for ${timezone}:`, error)
     return timezone.split('/').pop() || timezone
   }
 }
@@ -213,6 +250,11 @@ export const formatUTCOffset = (offset: number): string => {
 }
 
 export const formatTime = (date: Date, format: "12h" | "24h", includeSeconds: boolean = false): string => {
+  // Check if date is valid
+  if (!date || isNaN(date.getTime())) {
+    return "--:--"
+  }
+  
   if (format === "24h") {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
@@ -230,9 +272,63 @@ export const formatTime = (date: Date, format: "12h" | "24h", includeSeconds: bo
 }
 
 export const getTimeForTimezone = (baseTime: Date, timezone: string, selectedDate: Date): Date => {
-  const selectedDateTime = new Date(selectedDate)
-  selectedDateTime.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
-  return new Date(selectedDateTime.toLocaleString("en-US", { timeZone: timezone }))
+  try {
+    // Create a date with the same date as selectedDate but time from baseTime
+    const selectedDateTime = new Date(selectedDate)
+    selectedDateTime.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
+    
+    // Method 1: Use Intl.DateTimeFormat to get the time in the target timezone
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
+    
+    const parts = formatter.formatToParts(selectedDateTime)
+    const formatParts: Record<string, string> = {}
+    parts.forEach(part => {
+      formatParts[part.type] = part.value
+    })
+    
+    // Reconstruct the date in the target timezone
+    const timeInTimezone = new Date(
+      parseInt(formatParts.year),
+      parseInt(formatParts.month) - 1, // Month is 0-indexed
+      parseInt(formatParts.day),
+      parseInt(formatParts.hour),
+      parseInt(formatParts.minute),
+      parseInt(formatParts.second)
+    )
+    
+    // Verify the result is valid
+    if (!isNaN(timeInTimezone.getTime())) {
+      return timeInTimezone
+    }
+    
+    // Method 2: Fallback using offset calculation
+    const offset = getTimezoneOffset(selectedDateTime, timezone)
+    const utcTime = selectedDateTime.getTime() - (selectedDateTime.getTimezoneOffset() * 60 * 1000)
+    const targetTime = new Date(utcTime + (offset * 60 * 60 * 1000))
+    
+    if (!isNaN(targetTime.getTime())) {
+      return targetTime
+    }
+    
+    // Method 3: Final fallback
+    return selectedDateTime
+    
+  } catch (error) {
+    console.warn(`Error converting time for timezone ${timezone}:`, error)
+    // Return a valid fallback date
+    const fallback = new Date(selectedDate)
+    fallback.setHours(baseTime.getHours(), baseTime.getMinutes(), baseTime.getSeconds(), 0)
+    return fallback
+  }
 }
 
 export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedTimezoneInfo => {

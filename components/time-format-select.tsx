@@ -25,9 +25,9 @@ export function TimeFormatSelect({
 			</div>
 			<Select value={timeFormat} onValueChange={onTimeFormatChange}>
 				<SelectTrigger 
-					className='w-20 bg-card hover:bg-hover border-border transition-colors'
+					className='w-20 bg-card border-border transition-colors hover:bg-accent hover:text-accent-foreground'
 					style={{ 
-						borderColor: colorScheme.primary + '40', // 40 is ~25% opacity
+						borderColor: colorScheme.primary + '40',
 						'--tw-ring-color': colorScheme.primary 
 					} as React.CSSProperties}
 				>
