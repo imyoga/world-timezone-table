@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { format } from "date-fns"
-import { getTimeForTimezone } from "@/lib/timezone-utils"
+import { getTimeForTimezone, getTimezoneOffset, convertTimeToTimezone } from "@/lib/timezone-utils"
 
 export interface TimeRow {
   index: number
@@ -39,8 +39,9 @@ export const useTimeRows = (
           // For the base timezone, use the exact time we calculated
           row.times[timezone] = currentBaseTime
         } else {
-          // For other timezones, calculate the equivalent time
-          row.times[timezone] = getTimeForTimezone(currentBaseTime, timezone, selectedDate, baseTimezone)
+          // For other timezones, convert the base time to that timezone
+          // This ensures all columns show the same moment in time
+          row.times[timezone] = convertTimeToTimezone(currentBaseTime, baseTimezone, timezone, selectedDate)
         }
       })
 

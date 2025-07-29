@@ -1123,3 +1123,57 @@ export const getAllCitiesSorted = (): Array<{ timezone: string; info: TimezoneIn
 
   return allCities
 }
+
+// Simpler and more reliable timezone conversion function
+export const convertTimeToTimezone = (localTime: Date, fromTimezone: string, toTimezone: string, selectedDate: Date): Date => {
+  try {
+    const actualFromTimezone = getActualTimezone(fromTimezone)
+    const actualToTimezone = getActualTimezone(toTimezone)
+    
+    // If same timezone, return the same time
+    if (actualFromTimezone === actualToTimezone) {
+      return new Date(localTime)
+    }
+    
+    // Create a date-time string for the selected date and given time
+    const year = selectedDate.getFullYear()
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0')
+    const day = String(selectedDate.getDate()).padStart(2, '0')
+    const hours = String(localTime.getHours()).padStart(2, '0')
+    const minutes = String(localTime.getMinutes()).padStart(2, '0')
+    const seconds = String(localTime.getSeconds()).padStart(2, '0')
+    
+    // Create the datetime string in ISO format
+    const dateTimeString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
+    
+    // Parse it assuming it's in the source timezone
+    const tempDate = new Date(dateTimeString)
+    
+    // Get the time as if it were in the source timezone
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: actualToTimezone,
+      year: 'numeric',
+      month: '2-digit', 
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    })
+    
+    // Calculate the difference in timezone offsets
+    const sourceOffset = getTimezoneOffset(tempDate, actualFromTimezone)
+    const targetOffset = getTimezoneOffset(tempDate, actualToTimezone)
+    const offsetDiffMs = (targetOffset - sourceOffset) * 60 * 60 * 1000
+    
+    // Apply the offset difference to get the equivalent time in target timezone
+    const targetTime = new Date(tempDate.getTime() + offsetDiffMs)
+    
+    return targetTime
+    
+  } catch (error) {
+    console.warn(`Error converting time from ${fromTimezone} to ${toTimezone}:`, error)
+    // Return the original time as fallback
+    return new Date(localTime)
+  }
+}
