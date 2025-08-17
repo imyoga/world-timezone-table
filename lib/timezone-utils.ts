@@ -629,7 +629,6 @@ export const TIMEZONES: Record<string, TimezoneInfo> = {
 
 export const DEFAULT_COLUMNS = [
   "America/New_York",      // New York
-  "America/Calgary",       // Calgary
   "America/Chicago",       // Chicago
   "Europe/London",         // London UK
   "Asia/Dubai",           // Dubai
