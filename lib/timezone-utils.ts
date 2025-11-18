@@ -142,6 +142,14 @@ export const COUNTRY_NAMES: Record<string, string> = {
 
 // Comprehensive list of world cities with their timezones
 export const TIMEZONES: Record<string, TimezoneInfo> = {
+  // UTC - Coordinated Universal Time
+  "UTC": {
+    name: "UTC",
+    country: "ZZ", // Using ZZ for international/not applicable
+    city: "UTC",
+    timezone: "UTC",
+  },
+  
   // North America - USA
   "America/New_York": {
     name: "Eastern",
@@ -631,6 +639,7 @@ export const DEFAULT_COLUMNS = [
   "America/New_York",      // New York
   "America/Chicago",       // Chicago
   "Europe/London",         // London UK
+  "UTC",                   // UTC
   "Asia/Dubai",           // Dubai
   "Asia/Kolkata",         // India
   "Australia/Sydney",     // Sydney Australia
@@ -656,6 +665,11 @@ export const getTimezoneOffset = (date: Date, timezone: string): number => {
 // Get timezone abbreviation dynamically using multiple Intl API strategies
 export const getTimezoneAbbreviation = (date: Date, timezone: string): string => {
   try {
+    // Special case for UTC
+    if (timezone === "UTC") {
+      return "UTC"
+    }
+    
     // Strategy 1: Try getting the abbreviation using formatToParts
     const formatter = new Intl.DateTimeFormat('en-US', {
       timeZone: timezone,
@@ -977,6 +991,11 @@ export const getTimezoneInfo = (timezone: string, selectedDate: Date): ExtendedT
 export const getFormattedCityName = (timezone: string): string => {
   const info = TIMEZONES[timezone]
   if (!info) return timezone
+  
+  // Special case for UTC - just return "UTC" without country
+  if (timezone === "UTC") {
+    return "UTC"
+  }
   
   const countryName = COUNTRY_NAMES[info.country] || info.country
   return `${info.city} (${countryName})`
