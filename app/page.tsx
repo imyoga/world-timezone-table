@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Globe } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Table } from '@/components/ui/table'
@@ -23,20 +23,25 @@ import {
 
 // Function to get the local system timezone
 function getLocalTimezone(): string {
-	if (typeof window !== 'undefined') {
-		try {
-			return Intl.DateTimeFormat().resolvedOptions().timeZone
-		} catch (error) {
-			// Fallback if timezone detection fails
-			return 'America/New_York'
-		}
+	try {
+		// Attempt to get the system timezone
+		return Intl.DateTimeFormat().resolvedOptions().timeZone
+	} catch (error) {
+		// Fallback if timezone detection fails
+		console.warn('Failed to detect system timezone:', error)
+		return 'America/New_York'
 	}
-	// Fallback for SSR
-	return 'America/New_York'
 }
 
 export default function WorldTimezoneTable() {
-	const [baseTimezone, setBaseTimezone] = useState(() => getLocalTimezone())
+	// Initialize with local system timezone
+	// Note: This will be 'America/New_York' during SSR, then update on client
+	const [baseTimezone, setBaseTimezone] = useState(() => {
+		if (typeof window !== 'undefined') {
+			return getLocalTimezone()
+		}
+		return 'America/New_York' // SSR fallback
+	})
 	const { timeFormat, setTimeFormat, colorScheme } = useTimeFormat()
 	const [selectedRow, setSelectedRow] = useState<number | null>(null)
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -45,22 +50,6 @@ export default function WorldTimezoneTable() {
 		useState<string[]>(DEFAULT_COLUMNS)
 
 	const { isClient, currentTime } = useClientTime()
-
-	// Ensure timezone is set to local timezone on client side
-	useEffect(() => {
-		if (isClient) {
-			const localTz = getLocalTimezone()
-			setBaseTimezone((currentTz) => {
-				// Only update if it's still the default EST timezone
-				// This allows users to manually change it without it resetting
-				if (currentTz === 'America/New_York' && localTz !== 'America/New_York') {
-					return localTz
-				}
-				return currentTz
-			})
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isClient])
 
 	const currentRowIndex = useCurrentRowIndex(currentTime, baseTimezone)
 	const timeRows = useTimeRows(

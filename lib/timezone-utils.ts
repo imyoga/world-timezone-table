@@ -1006,6 +1006,11 @@ export const getFormattedCityNameWithFlags = (timezone: string): string => {
   const info = TIMEZONES[timezone]
   if (!info) return timezone
   
+  // Special case for UTC - just return "UTC" without country
+  if (timezone === "UTC") {
+    return "UTC"
+  }
+  
   const flagEmoji = COUNTRY_FLAGS[info.country]
   const countryName = COUNTRY_NAMES[info.country] || info.country
   
@@ -1018,6 +1023,11 @@ export const getFormattedCityNameWithFlags = (timezone: string): string => {
 export const getFormattedCityNameWithCountry = (timezone: string): string => {
   const info = TIMEZONES[timezone]
   if (!info) return timezone
+  
+  // Special case for UTC - just return "UTC" without country
+  if (timezone === "UTC") {
+    return "UTC"
+  }
   
   const countryName = COUNTRY_NAMES[info.country] || info.country
   return `${info.city}, ${countryName}`
